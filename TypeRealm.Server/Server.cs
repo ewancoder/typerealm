@@ -9,17 +9,16 @@ namespace TypeRealm.Server
 {
     internal sealed class Server : IDisposable
     {
-        private const int Port = 30100;
         private readonly ILogger _logger;
         private readonly List<ConnectedClient> _connectedClients;
         private readonly object _lock = new object();
         private TcpListener _listener;
 
-        public Server(ILogger logger)
+        public Server(int port, ILogger logger)
         {
             _logger = logger;
             _connectedClients = new List<ConnectedClient>();
-            _listener = new TcpListener(IPAddress.Parse("0.0.0.0"), Port);
+            _listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
             _listener.Start();
             _listener.BeginAcceptTcpClient(HandleConnection, _listener);
         }

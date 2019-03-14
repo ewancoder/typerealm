@@ -6,7 +6,7 @@ namespace TypeRealm.ConsoleApp
 {
     static class Program
     {
-        static int Port = 30100;
+        const int Port = 30100;
 
         static void Main()
         {
