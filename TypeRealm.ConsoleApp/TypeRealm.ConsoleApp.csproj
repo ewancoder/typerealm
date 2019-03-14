@@ -41,5 +41,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TypeRealm.Messages\TypeRealm.Messages.csproj">
+      <Project>{EFF1A6FE-B17E-4EFF-BFA7-0F7FEAC1A98A}</Project>
+      <Name>TypeRealm.Messages</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

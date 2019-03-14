@@ -7,7 +7,12 @@ namespace TypeRealm.Server
         static void Main()
         {
             Console.WriteLine("===== TypeRealm server =====");
-            Console.ReadLine();
+
+            var logger = new ConsoleLogger();
+            using (var server = new Server(logger))
+            {
+                Console.ReadLine();
+            }
         }
     }
 }

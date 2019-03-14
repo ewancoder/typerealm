@@ -38,8 +38,17 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectedClient.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TypeRealm.Messages\TypeRealm.Messages.csproj">
+      <Project>{EFF1A6FE-B17E-4EFF-BFA7-0F7FEAC1A98A}</Project>
+      <Name>TypeRealm.Messages</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
