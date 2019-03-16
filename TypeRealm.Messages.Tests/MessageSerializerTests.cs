@@ -33,6 +33,28 @@ namespace TypeRealm.Messages.Tests
         }
 
         [Fact]
+        public void ShouldSerializeQuitMessage()
+        {
+            byte[] bytes;
+
+            using (var stream = new MemoryStream())
+            {
+                MessageSerializer.Write(stream, new Quit());
+
+                bytes = stream.ToArray();
+            }
+
+            Assert.NotEmpty(bytes);
+
+            using (var stream = new MemoryStream(bytes))
+            {
+                var message = MessageSerializer.Read(stream) as Quit;
+
+                Assert.NotNull(message);
+            }
+        }
+
+        [Fact]
         public void ShouldNotSerializeUnknownMessage()
         {
             using (var stream = new MemoryStream())

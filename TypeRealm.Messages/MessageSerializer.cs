@@ -8,7 +8,8 @@ namespace TypeRealm.Messages
     {
         private static readonly IndexedCollection<Type> _messages = new IndexedCollection<Type>(new[]
         {
-            typeof(Authorize)
+            typeof(Authorize),
+            typeof(Quit)
         });
 
         public static object Read(Stream stream)

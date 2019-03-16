@@ -42,6 +42,7 @@
     <Compile Include="IndexedCollection[TValue].cs" />
     <Compile Include="MessageSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
