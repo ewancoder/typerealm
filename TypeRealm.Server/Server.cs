@@ -64,6 +64,13 @@ namespace TypeRealm.Server
                     lock (_lock)
                     {
                         _logger.Log($"Received message: {message}");
+
+                        if (message is Quit)
+                        {
+                            _connectedClients.Remove(client);
+                            _logger.Log($"{playerId} gracefully quit.");
+                            return;
+                        }
                     }
                 }
             }

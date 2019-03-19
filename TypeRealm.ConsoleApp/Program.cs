@@ -32,7 +32,14 @@ namespace TypeRealm.ConsoleApp
                     });
 
                     Console.WriteLine("Sent Authorize message.");
-                    Console.ReadLine();
+
+                    var command = Console.ReadLine();
+
+                    if (command == "exit")
+                    {
+                        MessageSerializer.Write(stream, new Quit());
+                        Console.ReadLine();
+                    }
                 }
             }
         }
