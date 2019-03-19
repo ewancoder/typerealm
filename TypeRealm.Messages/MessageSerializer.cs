@@ -9,6 +9,7 @@ namespace TypeRealm.Messages
         private static readonly IndexedCollection<Type> _messages = new IndexedCollection<Type>(new[]
         {
             typeof(Authorize),
+            typeof(Disconnected),
             typeof(Quit)
         });
 

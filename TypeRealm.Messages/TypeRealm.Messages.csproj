@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authorize.cs" />
+    <Compile Include="Disconnected.cs" />
     <Compile Include="IndexedCollection[TValue].cs" />
     <Compile Include="MessageSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

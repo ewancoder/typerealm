@@ -38,7 +38,16 @@ namespace TypeRealm.ConsoleApp
                     if (command == "exit")
                     {
                         MessageSerializer.Write(stream, new Quit());
-                        Console.ReadLine();
+
+                        // Wait for Quit acknowledgement.
+
+                        while (true)
+                        {
+                            var message = MessageSerializer.Read(stream);
+
+                            if (message is Disconnected)
+                                return;
+                        }
                     }
                 }
             }

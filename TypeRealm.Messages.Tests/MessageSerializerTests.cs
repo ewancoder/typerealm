@@ -55,6 +55,28 @@ namespace TypeRealm.Messages.Tests
         }
 
         [Fact]
+        public void ShouldSerializeDisconnectedMessage()
+        {
+            byte[] bytes;
+
+            using (var stream = new MemoryStream())
+            {
+                MessageSerializer.Write(stream, new Disconnected());
+
+                bytes = stream.ToArray();
+            }
+
+            Assert.NotEmpty(bytes);
+
+            using (var stream = new MemoryStream(bytes))
+            {
+                var message = MessageSerializer.Read(stream) as Disconnected;
+
+                Assert.NotNull(message);
+            }
+        }
+
+        [Fact]
         public void ShouldNotSerializeUnknownMessage()
         {
             using (var stream = new MemoryStream())

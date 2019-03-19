@@ -68,6 +68,10 @@ namespace TypeRealm.Server
                         if (message is Quit)
                         {
                             _connectedClients.Remove(client);
+
+                            // Used to acknowledge that client has quit.
+                            MessageSerializer.Write(stream, new Disconnected());
+
                             _logger.Log($"{playerId} gracefully quit.");
                             return;
                         }
