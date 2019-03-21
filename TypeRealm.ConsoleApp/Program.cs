@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using TypeRealm.Messages;
 
 namespace TypeRealm.ConsoleApp
@@ -11,12 +12,15 @@ namespace TypeRealm.ConsoleApp
         static void Main()
         {
             Console.WriteLine("===== TypeRealm =====");
-            Console.Write("Server: ");
 
+            Console.Write("Server: ");
             var server = Console.ReadLine();
 
-            Console.Write("Your name: ");
-            var playerName = Console.ReadLine();
+            Console.Write("Login: ");
+            var login = Console.ReadLine();
+
+            Console.Write("Password: ");
+            var password = Console.ReadLine();
 
             using (var client = new TcpClient())
             {
@@ -24,11 +28,27 @@ namespace TypeRealm.ConsoleApp
 
                 var stream = client.GetStream();
 
+                Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        // TODO: Add try/catch.
+                        var message = MessageSerializer.Read(stream);
+
+                        if (message is Disconnected disconnected)
+                        {
+                            Console.WriteLine($"You have been disconnected. Reason: {disconnected.Reason.ToString()}");
+                            return;
+                        }
+                    }
+                });
+
                 while (true)
                 {
                     MessageSerializer.Write(stream, new Authorize
                     {
-                        PlayerId = playerName
+                        Login = login,
+                        Password = password
                     });
 
                     Console.WriteLine("Sent Authorize message.");
@@ -38,16 +58,8 @@ namespace TypeRealm.ConsoleApp
                     if (command == "exit")
                     {
                         MessageSerializer.Write(stream, new Quit());
-
-                        // Wait for Quit acknowledgement.
-
-                        while (true)
-                        {
-                            var message = MessageSerializer.Read(stream);
-
-                            if (message is Disconnected)
-                                return;
-                        }
+                        Console.ReadLine();
+                        return; // TODO: Return only if disconnect has been acknowledged. Return to main menu.
                     }
                 }
             }

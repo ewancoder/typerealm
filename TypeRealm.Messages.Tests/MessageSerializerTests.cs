@@ -16,7 +16,8 @@ namespace TypeRealm.Messages.Tests
             {
                 MessageSerializer.Write(stream, new Authorize
                 {
-                    PlayerId = "player id"
+                    Login = "login",
+                    Password = "password"
                 });
 
                 bytes = stream.ToArray();
@@ -28,7 +29,8 @@ namespace TypeRealm.Messages.Tests
             {
                 var message = MessageSerializer.Read(stream) as Authorize;
 
-                Assert.Equal("player id", message.PlayerId);
+                Assert.Equal("login", message.Login);
+                Assert.Equal("password", message.Password);
             }
         }
 

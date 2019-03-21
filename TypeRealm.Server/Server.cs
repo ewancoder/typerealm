@@ -14,13 +14,17 @@ namespace TypeRealm.Server
         private readonly object _lock = new object();
         private TcpListener _listener;
 
-        public Server(int port, ILogger logger)
+        private readonly IPlayerRepository _playerRepository;
+
+        public Server(int port, ILogger logger, IPlayerRepository playerRepository)
         {
             _logger = logger;
             _connectedClients = new List<ConnectedClient>();
             _listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
             _listener.Start();
             _listener.BeginAcceptTcpClient(HandleConnection, _listener);
+
+            _playerRepository = playerRepository;
         }
 
         private void HandleConnection(IAsyncResult result)
@@ -45,7 +49,21 @@ namespace TypeRealm.Server
         private void HandleClient(Stream stream)
         {
             var authorizeMessage = MessageSerializer.Read(stream) as Authorize;
-            var playerId = authorizeMessage.PlayerId;
+
+            var player = _playerRepository.AuthenticateOrCreate(authorizeMessage.Login, authorizeMessage.Password);
+
+            if (player == null)
+            {
+                MessageSerializer.Write(stream, new Disconnected
+                {
+                    Reason = DisconnectReason.InvalidCredentials
+                });
+
+                _logger.Log($"Client tried to connect with invalid credentials.");
+                return;
+            }
+
+            var playerId = player.PlayerId;
 
             var client = new ConnectedClient(playerId, stream);
 

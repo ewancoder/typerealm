@@ -6,6 +6,9 @@ namespace TypeRealm.Messages
     public sealed class Authorize
     {
         [ProtoMember(1)]
-        public string PlayerId { get; set; }
+        public string Login { get; set; }
+
+        [ProtoMember(2)]
+        public string Password { get; set; }
     }
 }
