@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using TypeRealm.Domain;
 using TypeRealm.Messages;
 
 namespace TypeRealm.Server

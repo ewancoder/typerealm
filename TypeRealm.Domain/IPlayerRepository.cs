@@ -1,6 +1,6 @@
-﻿namespace TypeRealm.Server
+﻿namespace TypeRealm.Domain
 {
-    internal interface IPlayerRepository
+    public interface IPlayerRepository
     {
         Player AuthenticateOrCreate(string login, string password);
     }

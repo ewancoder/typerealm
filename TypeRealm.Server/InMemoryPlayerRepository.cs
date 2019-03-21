@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using TypeRealm.Domain;
 
 namespace TypeRealm.Server
 {
@@ -25,7 +27,7 @@ namespace TypeRealm.Server
 
         private Player CreatePlayer(string login, string password)
         {
-            var player = new Player();
+            var player = new Player(Guid.NewGuid().ToString());
 
             _players.Add(login, player);
             _passwords.Add(login, password);
