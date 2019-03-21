@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectedClient.cs" />
+    <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="InMemoryPlayerRepository.cs" />
     <Compile Include="Program.cs" />
