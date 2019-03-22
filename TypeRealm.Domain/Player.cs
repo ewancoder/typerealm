@@ -8,6 +8,7 @@ namespace TypeRealm.Domain
         {
             PlayerId = playerId;
             AccountId = accountId;
+            Name = name;
         }
 
         public Guid PlayerId { get; }
