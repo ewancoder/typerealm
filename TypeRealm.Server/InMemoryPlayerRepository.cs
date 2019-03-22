@@ -1,38 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeRealm.Domain;
 
 namespace TypeRealm.Server
 {
     internal sealed class InMemoryPlayerRepository : IPlayerRepository
     {
-        private readonly Dictionary<string, Player> _players
-            = new Dictionary<string, Player>();
+        private readonly List<Player> _players = new List<Player>();
 
-        private readonly Dictionary<string, string> _passwords
-            = new Dictionary<string, string>();
-
-        public Player AuthenticateOrCreate(string login, string password)
+        public Player FindByName(string name)
         {
-            if (!_players.ContainsKey(login))
-            {
-                return CreatePlayer(login, password);
-            }
-
-            if (password != _passwords[login])
-                return null;
-
-            return _players[login];
+            return _players.SingleOrDefault(p => p.Name == name);
         }
 
-        private Player CreatePlayer(string login, string password)
+        public void Save(Player player)
         {
-            var player = new Player(Guid.NewGuid().ToString());
+            if (_players.Contains(player))
+                return;
 
-            _players.Add(login, player);
-            _passwords.Add(login, password);
+            if (_players.Any(p => p.PlayerId == player.PlayerId)
+                || _players.Any(p => p.Name == player.Name))
+                throw new InvalidOperationException("The player already exists.");
 
-            return player;
+            _players.Add(player);
         }
     }
 }

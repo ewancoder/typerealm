@@ -11,9 +11,10 @@ namespace TypeRealm.Server
             Console.WriteLine("===== TypeRealm server =====");
 
             var logger = new ConsoleLogger();
+            var accountRepository = new InMemoryAccountRepository();
             var playerRepository = new InMemoryPlayerRepository();
 
-            using (var server = new Server(Port, logger, playerRepository))
+            using (var server = new Server(Port, logger, accountRepository, playerRepository))
             {
                 Console.ReadLine();
             }

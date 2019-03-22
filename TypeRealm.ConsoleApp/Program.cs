@@ -22,6 +22,9 @@ namespace TypeRealm.ConsoleApp
             Console.Write("Password: ");
             var password = Console.ReadLine();
 
+            Console.Write("Player name: ");
+            var playerName = Console.ReadLine();
+
             using (var client = new TcpClient())
             {
                 client.Connect(server, Port);
@@ -48,7 +51,8 @@ namespace TypeRealm.ConsoleApp
                     MessageSerializer.Write(stream, new Authorize
                     {
                         Login = login,
-                        Password = password
+                        Password = password,
+                        PlayerName = playerName
                     });
 
                     Console.WriteLine("Sent Authorize message.");

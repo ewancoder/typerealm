@@ -15,17 +15,24 @@ namespace TypeRealm.Server
         private readonly object _lock = new object();
         private TcpListener _listener;
 
+        private readonly IAccountRepository _accountRepository;
         private readonly IPlayerRepository _playerRepository;
 
-        public Server(int port, ILogger logger, IPlayerRepository playerRepository)
+        public Server(
+            int port,
+            ILogger logger,
+            IAccountRepository accountRepository,
+            IPlayerRepository playerRepository)
         {
             _logger = logger;
             _connectedClients = new List<ConnectedClient>();
+
+            _accountRepository = accountRepository;
+            _playerRepository = playerRepository;
+
             _listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
             _listener.Start();
             _listener.BeginAcceptTcpClient(HandleConnection, _listener);
-
-            _playerRepository = playerRepository;
         }
 
         private void HandleConnection(IAsyncResult result)
@@ -51,9 +58,19 @@ namespace TypeRealm.Server
         {
             var authorizeMessage = MessageSerializer.Read(stream) as Authorize;
 
-            var player = _playerRepository.AuthenticateOrCreate(authorizeMessage.Login, authorizeMessage.Password);
+            var account = _accountRepository.FindByLogin(authorizeMessage.Login);
+            if (account == null)
+            {
+                // Create a new account.
+                account = new Account(
+                    Guid.NewGuid(),
+                    authorizeMessage.Login,
+                    authorizeMessage.Password);
 
-            if (player == null)
+                _accountRepository.Save(account);
+            }
+
+            if (authorizeMessage.Password != account.Password)
             {
                 MessageSerializer.Write(stream, new Disconnected
                 {
@@ -64,8 +81,17 @@ namespace TypeRealm.Server
                 return;
             }
 
-            var playerId = player.PlayerId;
+            var player = _playerRepository.FindByName(authorizeMessage.PlayerName);
+            if (player == null)
+            {
+                // Create a new player.
+                player = account.CreatePlayer(
+                    Guid.NewGuid(), authorizeMessage.PlayerName);
 
+                _playerRepository.Save(player);
+            }
+
+            var playerId = player.PlayerId;
             var client = new ConnectedClient(playerId, stream);
 
             lock (_lock)
