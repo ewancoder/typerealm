@@ -4,7 +4,7 @@ namespace TypeRealm.Domain
 {
     public sealed class Player
     {
-        public Player(Guid playerId, Guid accountId, string name)
+        internal Player(Guid playerId, Guid accountId, string name)
         {
             PlayerId = playerId;
             AccountId = accountId;
