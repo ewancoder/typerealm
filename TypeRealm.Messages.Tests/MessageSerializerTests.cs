@@ -10,72 +10,27 @@ namespace TypeRealm.Messages.Tests
         [Fact]
         public void ShouldSerializeAuthorizeMessage()
         {
-            byte[] bytes;
-
-            using (var stream = new MemoryStream())
+            ShouldSerialize(new Authorize
             {
-                MessageSerializer.Write(stream, new Authorize
-                {
-                    Login = "login",
-                    Password = "password"
-                });
-
-                bytes = stream.ToArray();
-            }
-
-            Assert.NotEmpty(bytes);
-
-            using (var stream = new MemoryStream(bytes))
+                Login = "login",
+                Password = "password"
+            }, message =>
             {
-                var message = MessageSerializer.Read(stream) as Authorize;
-
                 Assert.Equal("login", message.Login);
                 Assert.Equal("password", message.Password);
-            }
+            });
         }
 
         [Fact]
         public void ShouldSerializeQuitMessage()
         {
-            byte[] bytes;
-
-            using (var stream = new MemoryStream())
-            {
-                MessageSerializer.Write(stream, new Quit());
-
-                bytes = stream.ToArray();
-            }
-
-            Assert.NotEmpty(bytes);
-
-            using (var stream = new MemoryStream(bytes))
-            {
-                var message = MessageSerializer.Read(stream) as Quit;
-
-                Assert.NotNull(message);
-            }
+            ShouldSerialize(new Quit(), message => { });
         }
 
         [Fact]
         public void ShouldSerializeDisconnectedMessage()
         {
-            byte[] bytes;
-
-            using (var stream = new MemoryStream())
-            {
-                MessageSerializer.Write(stream, new Disconnected());
-
-                bytes = stream.ToArray();
-            }
-
-            Assert.NotEmpty(bytes);
-
-            using (var stream = new MemoryStream(bytes))
-            {
-                var message = MessageSerializer.Read(stream) as Disconnected;
-
-                Assert.NotNull(message);
-            }
+            ShouldSerialize(new Disconnected(), message => { });
         }
 
         [Fact]
@@ -111,6 +66,29 @@ namespace TypeRealm.Messages.Tests
             {
                 Assert.Throws<InvalidOperationException>(
                     () => MessageSerializer.Read(stream));
+            }
+        }
+
+        private static void ShouldSerialize<T>(T message, Action<T> assert)
+            where T : class
+        {
+            byte[] bytes;
+
+            using (var stream = new MemoryStream())
+            {
+                MessageSerializer.Write(stream, message);
+
+                bytes = stream.ToArray();
+            }
+
+            Assert.NotEmpty(bytes);
+
+            using (var stream = new MemoryStream(bytes))
+            {
+                var deserialized = MessageSerializer.Read(stream) as T;
+
+                Assert.NotNull(deserialized);
+                assert(deserialized);
             }
         }
     }
