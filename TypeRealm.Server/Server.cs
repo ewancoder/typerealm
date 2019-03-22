@@ -92,6 +92,10 @@ namespace TypeRealm.Server
                     lock (_lock)
                     {
                         _logger.Log($"Received message: {message}");
+                        MessageSerializer.Write(stream, new Say
+                        {
+                            Message = $"Server received a {message} message from you."
+                        });
 
                         if (message is Quit)
                         {

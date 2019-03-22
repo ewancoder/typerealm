@@ -10,6 +10,7 @@ namespace TypeRealm.Messages
         {
             typeof(Authorize),
             typeof(Disconnected),
+            typeof(Say),
             typeof(Quit)
         });
 

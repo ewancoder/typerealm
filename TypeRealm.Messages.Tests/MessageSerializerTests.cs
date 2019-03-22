@@ -34,6 +34,18 @@ namespace TypeRealm.Messages.Tests
         }
 
         [Fact]
+        public void ShouldSerializeSayMessage()
+        {
+            ShouldSerialize(new Say
+            {
+                Message = "message"
+            }, message =>
+            {
+                Assert.Equal("message", message.Message);
+            });
+        }
+
+        [Fact]
         public void ShouldNotSerializeUnknownMessage()
         {
             using (var stream = new MemoryStream())

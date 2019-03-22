@@ -43,6 +43,12 @@ namespace TypeRealm.ConsoleApp
                             Console.WriteLine($"You have been disconnected. Reason: {disconnected.Reason.ToString()}");
                             return;
                         }
+
+                        if (message is Say say)
+                        {
+                            Console.WriteLine($"SERVER SAID: {say.Message}");
+                            Console.ReadLine();
+                        }
                     }
                 });
 
