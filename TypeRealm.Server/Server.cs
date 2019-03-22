@@ -58,19 +58,12 @@ namespace TypeRealm.Server
         {
             var authorizeMessage = MessageSerializer.Read(stream) as Authorize;
 
-            var account = _accountRepository.FindByLogin(authorizeMessage.Login);
-            if (account == null)
-            {
-                // Create a new account.
-                account = new Account(
-                    Guid.NewGuid(),
-                    authorizeMessage.Login,
-                    authorizeMessage.Password);
+            var player = AuthorizeOrRegister(
+                authorizeMessage.Login,
+                authorizeMessage.Password,
+                authorizeMessage.PlayerName);
 
-                _accountRepository.Save(account);
-            }
-
-            if (authorizeMessage.Password != account.Password)
+            if (player == null)
             {
                 MessageSerializer.Write(stream, new Disconnected
                 {
@@ -79,16 +72,6 @@ namespace TypeRealm.Server
 
                 _logger.Log($"Client tried to connect with invalid credentials.");
                 return;
-            }
-
-            var player = _playerRepository.FindByName(authorizeMessage.PlayerName);
-            if (player == null)
-            {
-                // Create a new player.
-                player = account.CreatePlayer(
-                    Guid.NewGuid(), authorizeMessage.PlayerName);
-
-                _playerRepository.Save(player);
             }
 
             var playerId = player.PlayerId;
@@ -131,6 +114,38 @@ namespace TypeRealm.Server
                     _logger.Log($"{playerId} unexpectedly lost connection.", exception);
                 }
             }
+        }
+
+        private Player AuthorizeOrRegister(string login, string password, string playerName)
+        {
+            var account = _accountRepository.FindByLogin(login);
+            if (account == null)
+            {
+                // Create a new account.
+                account = new Account(
+                    Guid.NewGuid(),
+                    login,
+                    password);
+
+                _accountRepository.Save(account);
+            }
+
+            if (password != account.Password)
+            {
+                return null;
+            }
+
+            var player = _playerRepository.FindByName(account.AccountId, playerName);
+            if (player == null)
+            {
+                // Create a new player.
+                player = account.CreatePlayer(
+                    Guid.NewGuid(), playerName);
+
+                _playerRepository.Save(player);
+            }
+
+            return player;
         }
 
         public void Dispose()
