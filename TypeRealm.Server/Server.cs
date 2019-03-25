@@ -58,10 +58,15 @@ namespace TypeRealm.Server
         {
             var authorizeMessage = MessageSerializer.Read(stream) as Authorize;
 
-            var player = AuthorizeOrRegister(
-                authorizeMessage.Login,
-                authorizeMessage.Password,
-                authorizeMessage.PlayerName);
+            Player player = null;
+
+            lock (_lock)
+            {
+                player = AuthorizeOrRegister(
+                    authorizeMessage.Login,
+                    authorizeMessage.Password,
+                    authorizeMessage.PlayerName);
+            }
 
             if (player == null)
             {
