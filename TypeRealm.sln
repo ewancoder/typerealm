@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeRealm.Messages.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeRealm.Domain", "TypeRealm.Domain\TypeRealm.Domain.csproj", "{1EDF82DD-EDF0-428A-8B89-E074E65056AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeRealm.Domain.Tests", "TypeRealm.Domain.Tests\TypeRealm.Domain.Tests.csproj", "{C79E6A32-04E9-4A79-9E4C-15B811719B9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1EDF82DD-EDF0-428A-8B89-E074E65056AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EDF82DD-EDF0-428A-8B89-E074E65056AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EDF82DD-EDF0-428A-8B89-E074E65056AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C79E6A32-04E9-4A79-9E4C-15B811719B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C79E6A32-04E9-4A79-9E4C-15B811719B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C79E6A32-04E9-4A79-9E4C-15B811719B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C79E6A32-04E9-4A79-9E4C-15B811719B9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
