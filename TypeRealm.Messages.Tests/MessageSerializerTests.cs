@@ -30,7 +30,13 @@ namespace TypeRealm.Messages.Tests
         [Fact]
         public void ShouldSerializeDisconnectedMessage()
         {
-            ShouldSerialize(new Disconnected(), message => { });
+            ShouldSerialize(new Disconnected
+            {
+                Reason = DisconnectReason.InvalidCredentials
+            }, message =>
+            {
+                Assert.Equal(DisconnectReason.InvalidCredentials, message.Reason);
+            });
         }
 
         [Fact]
