@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using TypeRealm.Domain;
 using TypeRealm.Messages;
 
 namespace TypeRealm.Server
@@ -12,26 +11,18 @@ namespace TypeRealm.Server
     {
         private readonly ILogger _logger;
         private readonly List<ConnectedClient> _connectedClients;
-        private readonly object _lock = new object();
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMessageDispatcher _messageDispatcher;
+        private readonly object _lock;
         private TcpListener _listener;
 
-        private readonly IAccountRepository _accountRepository;
-        private readonly IPlayerRepository _playerRepository;
-
-        public Server(
-            int port,
-            ILogger logger,
-            IAccountRepository accountRepository,
-            IPlayerRepository playerRepository,
-            IMessageDispatcher messageDispatcher)
+        public Server(int port, ILogger logger, IAuthorizationService authorizationService, IMessageDispatcher messageDispatcher)
         {
             _logger = logger;
             _connectedClients = new List<ConnectedClient>();
-
-            _accountRepository = accountRepository;
-            _playerRepository = playerRepository;
+            _authorizationService = authorizationService;
             _messageDispatcher = messageDispatcher;
+            _lock = new object();
 
             _listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
             _listener.Start();
@@ -48,7 +39,7 @@ namespace TypeRealm.Server
                 using (var tcpClient = _listener.EndAcceptTcpClient(result))
                 using (var stream = tcpClient.GetStream())
                 {
-                    HandleClient(stream);
+                    HandleStream(stream);
                 }
             }
             catch (Exception exception)
@@ -57,38 +48,33 @@ namespace TypeRealm.Server
             }
         }
 
-        private void HandleClient(Stream stream)
+        private void HandleStream(Stream stream)
         {
             var authorizeMessage = MessageSerializer.Read(stream) as Authorize;
 
-            Player player = null;
-
+            ConnectedClient client = null;
             lock (_lock)
             {
-                player = AuthorizeOrRegister(
-                    authorizeMessage.Login,
-                    authorizeMessage.Password,
-                    authorizeMessage.PlayerName);
-            }
+                var playerId = _authorizationService.AuthorizeOrCreate(
+                    authorizeMessage.Login, authorizeMessage.Password, authorizeMessage.PlayerName);
 
-            if (player == null)
-            {
-                MessageSerializer.Write(stream, new Disconnected
+                if (playerId == null)
                 {
-                    Reason = DisconnectReason.InvalidCredentials
-                });
+                    MessageSerializer.Write(stream, new Disconnected
+                    {
+                        Reason = DisconnectReason.InvalidCredentials
+                    });
 
-                _logger.Log($"Client tried to connect with invalid credentials.");
-                return;
-            }
+                    return; // Unsuccessful login.
+                }
 
-            var playerId = player.PlayerId;
-            var client = new ConnectedClient(playerId, stream);
+                client = new ConnectedClient(playerId.Value, stream);
 
-            lock (_lock)
-            {
-                _connectedClients.Add(client);
-                _logger.Log($"{playerId} has connected.");
+                lock (_lock)
+                {
+                    _connectedClients.Add(client);
+                    _logger.Log($"{client.PlayerId} has connected.");
+                }
             }
 
             try
@@ -106,7 +92,7 @@ namespace TypeRealm.Server
                             // Used to acknowledge that client has quit.
                             MessageSerializer.Write(stream, new Disconnected());
 
-                            _logger.Log($"{playerId} gracefully quit.");
+                            _logger.Log($"{client.PlayerId} gracefully quit.");
                             return;
                         }
 
@@ -119,41 +105,9 @@ namespace TypeRealm.Server
                 lock (_lock)
                 {
                     _connectedClients.Remove(client);
-                    _logger.Log($"{playerId} unexpectedly lost connection.", exception);
+                    _logger.Log($"{client.PlayerId} unexpectedly lost connection.", exception);
                 }
             }
-        }
-
-        private Player AuthorizeOrRegister(string login, string password, string playerName)
-        {
-            var account = _accountRepository.FindByLogin(login);
-            if (account == null)
-            {
-                // Create a new account.
-                account = new Account(
-                    Guid.NewGuid(),
-                    login,
-                    password);
-
-                _accountRepository.Save(account);
-            }
-
-            if (password != account.Password)
-            {
-                return null;
-            }
-
-            var player = _playerRepository.FindByName(account.AccountId, playerName);
-            if (player == null)
-            {
-                // Create a new player.
-                player = account.CreatePlayer(
-                    Guid.NewGuid(), playerName);
-
-                _playerRepository.Save(player);
-            }
-
-            return player;
         }
 
         public void Dispose()

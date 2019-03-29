@@ -38,9 +38,11 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorizationService.cs" />
     <Compile Include="ConnectedClient.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="EchoMessageDispatcher.cs" />
+    <Compile Include="IAuthorizationService.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IMessageDispatcher.cs" />
     <Compile Include="InMemoryAccountRepository.cs" />
