@@ -15,8 +15,9 @@ namespace TypeRealm.Server
             var playerRepository = new InMemoryPlayerRepository();
             var messageDispatcher = new EchoMessageDispatcher();
             var authorizationService = new AuthorizationService(accountRepository, playerRepository, logger);
+            var clientListenerFactory = new TcpClientListenerFactory(logger);
 
-            using (var server = new Server(Port, logger, authorizationService, messageDispatcher))
+            using (var server = new Server(Port, logger, authorizationService, messageDispatcher, clientListenerFactory))
             {
                 Console.ReadLine();
             }

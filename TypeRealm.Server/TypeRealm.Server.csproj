@@ -43,6 +43,7 @@
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="EchoMessageDispatcher.cs" />
     <Compile Include="IAuthorizationService.cs" />
+    <Compile Include="IClientListenerFactory.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IMessageDispatcher.cs" />
     <Compile Include="InMemoryAccountRepository.cs" />
@@ -50,6 +51,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
+    <Compile Include="TcpClientListener.cs" />
+    <Compile Include="TcpClientListenerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeRealm.Domain\TypeRealm.Domain.csproj">

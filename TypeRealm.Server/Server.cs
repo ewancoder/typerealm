@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 using TypeRealm.Messages;
 
 namespace TypeRealm.Server
@@ -14,9 +12,15 @@ namespace TypeRealm.Server
         private readonly IAuthorizationService _authorizationService;
         private readonly IMessageDispatcher _messageDispatcher;
         private readonly object _lock;
-        private TcpListener _listener;
 
-        public Server(int port, ILogger logger, IAuthorizationService authorizationService, IMessageDispatcher messageDispatcher)
+        private IDisposable _listener;
+
+        public Server(
+            int port,
+            ILogger logger,
+            IAuthorizationService authorizationService,
+            IMessageDispatcher messageDispatcher,
+            IClientListenerFactory clientListenerFactory)
         {
             _logger = logger;
             _connectedClients = new List<ConnectedClient>();
@@ -24,27 +28,15 @@ namespace TypeRealm.Server
             _messageDispatcher = messageDispatcher;
             _lock = new object();
 
-            _listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
-            _listener.Start();
-            _listener.BeginAcceptTcpClient(HandleConnection, _listener);
+            _listener = clientListenerFactory.StartListening(port, HandleStream);
         }
 
-        private void HandleConnection(IAsyncResult result)
+        public void Dispose()
         {
-            // Start waiting for another client as soon as any client has connected.
-            _listener.BeginAcceptTcpClient(HandleConnection, _listener);
-
-            try
+            if (_listener != null)
             {
-                using (var tcpClient = _listener.EndAcceptTcpClient(result))
-                using (var stream = tcpClient.GetStream())
-                {
-                    HandleStream(stream);
-                }
-            }
-            catch (Exception exception)
-            {
-                _logger.Log($"A client tried and failed to connect.", exception);
+                _listener.Dispose();
+                _listener = null;
             }
         }
 
@@ -107,15 +99,6 @@ namespace TypeRealm.Server
                     _connectedClients.Remove(client);
                     _logger.Log($"{client.PlayerId} unexpectedly lost connection.", exception);
                 }
-            }
-        }
-
-        public void Dispose()
-        {
-            if (_listener != null)
-            {
-                _listener.Stop();
-                _listener = null;
             }
         }
     }
