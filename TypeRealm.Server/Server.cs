@@ -13,6 +13,7 @@ namespace TypeRealm.Server
         private readonly ILogger _logger;
         private readonly List<ConnectedClient> _connectedClients;
         private readonly object _lock = new object();
+        private readonly IMessageDispatcher _messageDispatcher;
         private TcpListener _listener;
 
         private readonly IAccountRepository _accountRepository;
@@ -22,13 +23,15 @@ namespace TypeRealm.Server
             int port,
             ILogger logger,
             IAccountRepository accountRepository,
-            IPlayerRepository playerRepository)
+            IPlayerRepository playerRepository,
+            IMessageDispatcher messageDispatcher)
         {
             _logger = logger;
             _connectedClients = new List<ConnectedClient>();
 
             _accountRepository = accountRepository;
             _playerRepository = playerRepository;
+            _messageDispatcher = messageDispatcher;
 
             _listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
             _listener.Start();
@@ -96,12 +99,6 @@ namespace TypeRealm.Server
 
                     lock (_lock)
                     {
-                        _logger.Log($"Received message: {message}");
-                        MessageSerializer.Write(stream, new Say
-                        {
-                            Message = $"Server received a {message} message from you."
-                        });
-
                         if (message is Quit)
                         {
                             _connectedClients.Remove(client);
@@ -112,6 +109,8 @@ namespace TypeRealm.Server
                             _logger.Log($"{playerId} gracefully quit.");
                             return;
                         }
+
+                        _messageDispatcher.Dispatch(client, message);
                     }
                 }
             }
