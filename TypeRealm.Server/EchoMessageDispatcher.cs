@@ -9,7 +9,7 @@ namespace TypeRealm.Server
         {
             Console.WriteLine($"Received {message} from {client.PlayerId}.");
 
-            MessageSerializer.Write(client.Stream, new Say
+            client.Connection.Write(new Say
             {
                 Message = $"Server received a {message} message."
             });

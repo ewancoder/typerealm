@@ -1,17 +1,16 @@
 ﻿using System;
-using System.IO;
 
 namespace TypeRealm.Server
 {
     internal sealed class ConnectedClient
     {
-        public ConnectedClient(Guid playerId, Stream stream)
+        public ConnectedClient(Guid playerId, IConnection connection)
         {
             PlayerId = playerId;
-            Stream = stream;
+            Connection = connection;
         }
 
         public Guid PlayerId { get; }
-        public Stream Stream { get; }
+        public IConnection Connection { get; }
     }
 }

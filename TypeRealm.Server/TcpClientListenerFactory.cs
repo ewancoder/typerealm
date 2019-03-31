@@ -13,9 +13,9 @@ namespace TypeRealm.Server
         }
 
         // Connection handler will be called for every new connection in separate thread.
-        public IDisposable StartListening(int port, Action<Stream> streamHandler)
+        public IDisposable StartListening(int port, Action<IConnection> connectionHandler)
         {
-            return new TcpClientListener(port, streamHandler, _logger);
+            return new TcpClientListener(port, connectionHandler, _logger);
         }
     }
 }

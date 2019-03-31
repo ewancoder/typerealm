@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using TypeRealm.Messages;
 
 namespace TypeRealm.Server
@@ -28,7 +27,7 @@ namespace TypeRealm.Server
             _messageDispatcher = messageDispatcher;
             _lock = new object();
 
-            _listener = clientListenerFactory.StartListening(port, HandleStream);
+            _listener = clientListenerFactory.StartListening(port, HandleConnection);
         }
 
         public void Dispose()
@@ -40,9 +39,9 @@ namespace TypeRealm.Server
             }
         }
 
-        private void HandleStream(Stream stream)
+        private void HandleConnection(IConnection connection)
         {
-            var authorizeMessage = MessageSerializer.Read(stream) as Authorize;
+            var authorizeMessage = connection.Read() as Authorize;
 
             ConnectedClient client = null;
             lock (_lock)
@@ -52,7 +51,7 @@ namespace TypeRealm.Server
 
                 if (playerId == null)
                 {
-                    MessageSerializer.Write(stream, new Disconnected
+                    connection.Write(new Disconnected
                     {
                         Reason = DisconnectReason.InvalidCredentials
                     });
@@ -60,7 +59,7 @@ namespace TypeRealm.Server
                     return; // Unsuccessful login.
                 }
 
-                client = new ConnectedClient(playerId.Value, stream);
+                client = new ConnectedClient(playerId.Value, connection);
 
                 lock (_lock)
                 {
@@ -73,7 +72,7 @@ namespace TypeRealm.Server
             {
                 while (true)
                 {
-                    var message = MessageSerializer.Read(stream);
+                    var message = connection.Read();
 
                     lock (_lock)
                     {
@@ -82,7 +81,7 @@ namespace TypeRealm.Server
                             _connectedClients.Remove(client);
 
                             // Used to acknowledge that client has quit.
-                            MessageSerializer.Write(stream, new Disconnected());
+                            connection.Write(new Disconnected());
 
                             _logger.Log($"{client.PlayerId} gracefully quit.");
                             return;

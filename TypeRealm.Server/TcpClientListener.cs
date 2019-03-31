@@ -7,13 +7,13 @@ namespace TypeRealm.Server
 {
     internal sealed class TcpClientListener : IDisposable
     {
-        private readonly Action<Stream> _streamHandler;
+        private readonly Action<IConnection> _connectionHandler;
         private readonly ILogger _logger;
         private TcpListener _listener;
 
-        public TcpClientListener(int port, Action<Stream> streamHandler, ILogger logger)
+        public TcpClientListener(int port, Action<IConnection> connectionHandler, ILogger logger)
         {
-            _streamHandler = streamHandler;
+            _connectionHandler = connectionHandler;
             _logger = logger;
 
             _listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
@@ -31,7 +31,10 @@ namespace TypeRealm.Server
                 using (var tcpClient = _listener.EndAcceptTcpClient(result))
                 using (var stream = tcpClient.GetStream())
                 {
-                    _streamHandler(stream);
+                    // TODO: Consider making StreamConnection disposable.
+                    var connection = new StreamConnection(stream);
+
+                    _connectionHandler(connection);
                 }
             }
             catch (Exception exception)

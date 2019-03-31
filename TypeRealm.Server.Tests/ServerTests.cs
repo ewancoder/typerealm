@@ -25,7 +25,7 @@ namespace TypeRealm.Server.Tests
             var listenerMock = new Mock<IDisposable>();
 
             _clientListenerFactoryMock
-                .Setup(p => p.StartListening(_port, It.IsAny<Action<Stream>>()))
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
                 .Returns(listenerMock.Object);
 
             var sut = CreateServer();
