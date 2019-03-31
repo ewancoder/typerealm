@@ -42,6 +42,8 @@ namespace TypeRealm.Server
         private void HandleConnection(IConnection connection)
         {
             var authorizeMessage = connection.Read() as Authorize;
+            if (authorizeMessage == null)
+                return;
 
             ConnectedClient client = null;
             lock (_lock)

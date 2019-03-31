@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Moq;
+using TypeRealm.Messages;
 using Xunit;
 
 namespace TypeRealm.Server.Tests
@@ -32,6 +35,295 @@ namespace TypeRealm.Server.Tests
             sut.Dispose();
 
             listenerMock.Verify(x => x.Dispose());
+        }
+
+        [Fact]
+        public void ShouldReturnWhenFirstMessageIsNotAuthorize()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            CreateServer();
+
+            task.Wait(100);
+            Assert.True(task.IsCompleted);
+        }
+
+        [Fact]
+        public void ShouldReturnWhenNotAuthorized()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            connectionMock
+                .Setup(c => c.Read())
+                .Returns(new Authorize());
+
+            CreateServer();
+
+            task.Wait(100);
+            Assert.True(task.IsCompleted);
+        }
+
+        [Fact]
+        public void ShouldSendDisconnectedWithInvalidCredentialsWhenNotAuthorized()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            connectionMock
+                .Setup(c => c.Read())
+                .Returns(new Authorize());
+
+            CreateServer();
+
+            task.Wait(100);
+            connectionMock.Verify(c => c.Write(It.Is<Disconnected>(d => d.Reason == DisconnectReason.InvalidCredentials)));
+        }
+
+        [Fact]
+        public void ShouldConnectAndStartWaitingForMessages()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            var index = 0;
+            connectionMock
+                .Setup(c => c.Read())
+                .Returns(() =>
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            index++;
+                            return new Authorize
+                            {
+                                Login = "login",
+                                Password = "password",
+                                PlayerName = "playerName"
+                            };
+                        default:
+                            Thread.Sleep(Timeout.Infinite);
+                            return null;
+                    }
+                });
+
+            var playerId = Guid.NewGuid();
+            _authorizationServiceMock
+                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Returns(playerId);
+
+            CreateServer();
+
+            task.Wait(100);
+            Assert.False(task.IsCompleted);
+        }
+
+        [Fact]
+        public void ShouldDisconnectWhenQuitted()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            var index = 0;
+            connectionMock
+                .Setup(c => c.Read())
+                .Returns(() =>
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            index++;
+                            return new Authorize
+                            {
+                                Login = "login",
+                                Password = "password",
+                                PlayerName = "playerName"
+                            };
+                        case 1:
+                            index++;
+                            return new Quit();
+                        default:
+                            Thread.Sleep(Timeout.Infinite);
+                            return null;
+                    }
+                });
+
+            var playerId = Guid.NewGuid();
+            _authorizationServiceMock
+                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Returns(playerId);
+
+            CreateServer();
+
+            task.Wait(100);
+            Assert.True(task.IsCompleted);
+        }
+
+        [Fact]
+        public void ShouldSendDisconnectedWithNoReasonWhenQuitted()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            var index = 0;
+            connectionMock
+                .Setup(c => c.Read())
+                .Returns(() =>
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            index++;
+                            return new Authorize
+                            {
+                                Login = "login",
+                                Password = "password",
+                                PlayerName = "playerName"
+                            };
+                        case 1:
+                            index++;
+                            return new Quit();
+                        default:
+                            Thread.Sleep(Timeout.Infinite);
+                            return null;
+                    }
+                });
+
+            var playerId = Guid.NewGuid();
+            _authorizationServiceMock
+                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Returns(playerId);
+
+            CreateServer();
+
+            task.Wait(100);
+            connectionMock.Verify(c => c.Write(It.Is<Disconnected>(x => x.Reason == DisconnectReason.None)));
+        }
+
+        [Fact]
+        public void ShouldDisconnectWhenExceptionOccurs()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            var index = 0;
+            connectionMock
+                .Setup(c => c.Read())
+                .Returns(() =>
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            index++;
+                            return new Authorize
+                            {
+                                Login = "login",
+                                Password = "password",
+                                PlayerName = "playerName"
+                            };
+                        case 1:
+                            index++;
+                            throw new Exception();
+                        default:
+                            Thread.Sleep(Timeout.Infinite);
+                            return null;
+                    }
+                });
+
+            var playerId = Guid.NewGuid();
+            _authorizationServiceMock
+                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Returns(playerId);
+
+            CreateServer();
+
+            task.Wait(100);
+            Assert.True(task.IsCompleted);
+        }
+
+        [Fact]
+        public void ShouldDispatchReceivedMessages()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            var index = 0;
+            connectionMock
+                .Setup(c => c.Read())
+                .Returns(() =>
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            index++;
+                            return new Authorize
+                            {
+                                Login = "login",
+                                Password = "password",
+                                PlayerName = "playerName"
+                            };
+                        case 1:
+                            index++;
+                            return new Say();
+                        case 2:
+                            index++;
+                            return new Authorize();
+                        default:
+                            Thread.Sleep(Timeout.Infinite);
+                            return null;
+                    }
+                });
+
+            var playerId = Guid.NewGuid();
+            _authorizationServiceMock
+                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Returns(playerId);
+
+            CreateServer();
+
+            task.Wait(100);
+            Assert.False(task.IsCompleted);
+
+            _messageDispatcherMock.Verify(d => d.Dispatch(
+                It.Is<ConnectedClient>(x => x.PlayerId == playerId && x.Connection == connectionMock.Object),
+                It.IsAny<Say>()));
+
+            _messageDispatcherMock.Verify(d => d.Dispatch(
+                It.Is<ConnectedClient>(x => x.PlayerId == playerId && x.Connection == connectionMock.Object),
+                It.IsAny<Authorize>()));
         }
 
         private Server CreateServer()
