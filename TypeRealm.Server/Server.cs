@@ -61,7 +61,7 @@ namespace TypeRealm.Server
                     return; // Unsuccessful login.
                 }
 
-                client = new ConnectedClient(playerId.Value, connection);
+                client = new ConnectedClient(playerId, connection);
 
                 lock (_lock)
                 {

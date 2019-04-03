@@ -19,14 +19,16 @@ namespace TypeRealm.Server
             _logger = logger;
         }
 
-        public Guid? AuthorizeOrCreate(
+        public PlayerId AuthorizeOrCreate(
             string login, string password, string playerName)
         {
             var account = _accountRepository.FindByLogin(login);
             if (account == null)
             {
+                var accountId = _accountRepository.NextId();
+
                 // Create a new account.
-                account = new Account(Guid.NewGuid(), login, password);
+                account = new Account(accountId, login, password);
 
                 _accountRepository.Save(account);
             }
@@ -41,9 +43,11 @@ namespace TypeRealm.Server
             var player = _playerRepository.FindByName(account.AccountId, playerName);
             if (player == null)
             {
+                var playerId = _playerRepository.NextId();
+
                 // Create a new player.
                 player = account.CreatePlayer(
-                    Guid.NewGuid(), playerName);
+                    playerId, playerName);
 
                 _playerRepository.Save(player);
             }

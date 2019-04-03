@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TypeRealm.Domain
+﻿namespace TypeRealm.Domain
 {
     public interface IPlayerRepository
     {
@@ -9,8 +7,9 @@ namespace TypeRealm.Domain
         /// </summary>
         /// <param name="name">Player name.</param>
         /// <returns>Player instance.</returns>
-        Player FindByName(Guid accountId, string name);
-
+        Player FindByName(AccountId accountId, string name);
         void Save(Player player);
+
+        PlayerId NextId();
     }
 }

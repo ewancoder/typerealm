@@ -73,6 +73,10 @@
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TypeRealm.Domain\TypeRealm.Domain.csproj">
+      <Project>{1edf82dd-edf0-428a-8b89-e074e65056ad}</Project>
+      <Name>TypeRealm.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TypeRealm.Messages\TypeRealm.Messages.csproj">
       <Project>{EFF1A6FE-B17E-4EFF-BFA7-0F7FEAC1A98A}</Project>
       <Name>TypeRealm.Messages</Name>

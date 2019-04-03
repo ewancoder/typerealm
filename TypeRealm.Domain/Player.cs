@@ -1,18 +1,16 @@
-﻿using System;
-
-namespace TypeRealm.Domain
+﻿namespace TypeRealm.Domain
 {
     public sealed class Player
     {
-        internal Player(Guid playerId, Guid accountId, string name)
+        internal Player(PlayerId playerId, AccountId accountId, string name)
         {
             PlayerId = playerId;
             AccountId = accountId;
             Name = name;
         }
 
-        public Guid PlayerId { get; }
-        public Guid AccountId { get; }
+        public PlayerId PlayerId { get; }
+        public AccountId AccountId { get; }
         public string Name { get; }
     }
 }

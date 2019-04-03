@@ -14,6 +14,11 @@ namespace TypeRealm.Server
             return _accounts.SingleOrDefault(a => a.Login == login);
         }
 
+        public AccountId NextId()
+        {
+            return AccountId.New();
+        }
+
         public void Save(Account account)
         {
             if (_accounts.Contains(account))

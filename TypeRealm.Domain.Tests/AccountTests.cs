@@ -8,7 +8,7 @@ namespace TypeRealm.Domain.Tests
         [Fact]
         public void ShouldCreate()
         {
-            var accountId = Guid.NewGuid();
+            var accountId = AccountId.New();
             var account = new Account(accountId, "login", "password");
 
             Assert.Equal(accountId, account.AccountId);
@@ -20,7 +20,7 @@ namespace TypeRealm.Domain.Tests
         public void ShouldCreatePlayer()
         {
             var account = Fixture.Account();
-            var playerId = Guid.NewGuid();
+            var playerId = PlayerId.New();
 
             var player = account.CreatePlayer(playerId, "name");
 

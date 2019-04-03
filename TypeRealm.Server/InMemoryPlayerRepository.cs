@@ -9,7 +9,7 @@ namespace TypeRealm.Server
     {
         private readonly List<Player> _players = new List<Player>();
 
-        public Player FindByName(Guid accountId, string name)
+        public Player FindByName(AccountId accountId, string name)
         {
             var player = _players.SingleOrDefault(p => p.Name == name);
 
@@ -17,6 +17,11 @@ namespace TypeRealm.Server
                 return null;
 
             return player;
+        }
+
+        public PlayerId NextId()
+        {
+            return PlayerId.New();
         }
 
         public void Save(Player player)

@@ -6,7 +6,7 @@ namespace TypeRealm.Domain.Tests
     {
         public static Account Account()
         {
-            return new Account(Guid.NewGuid(), "login", "password");
+            return new Account(AccountId.New(), "login", "password");
         }
     }
 }

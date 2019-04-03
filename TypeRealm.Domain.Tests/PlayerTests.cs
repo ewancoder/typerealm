@@ -8,8 +8,8 @@ namespace TypeRealm.Domain.Tests
         [Fact]
         public void ShouldCreatePlayer()
         {
-            var playerId = Guid.NewGuid();
-            var accountId = Guid.NewGuid();
+            var playerId = PlayerId.New();
+            var accountId = AccountId.New();
 
             var player = new Player(playerId, accountId, "name");
 

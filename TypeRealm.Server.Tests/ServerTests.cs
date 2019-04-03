@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
+using TypeRealm.Domain;
 using TypeRealm.Messages;
 using Xunit;
 
@@ -124,7 +125,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = Guid.NewGuid();
+            var playerId = PlayerId.New();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
                 .Returns(playerId);
@@ -169,7 +170,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = Guid.NewGuid();
+            var playerId = PlayerId.New();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
                 .Returns(playerId);
@@ -214,7 +215,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = Guid.NewGuid();
+            var playerId = PlayerId.New();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
                 .Returns(playerId);
@@ -259,7 +260,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = Guid.NewGuid();
+            var playerId = PlayerId.New();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
                 .Returns(playerId);
@@ -307,7 +308,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = Guid.NewGuid();
+            var playerId = PlayerId.New();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
                 .Returns(playerId);

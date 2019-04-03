@@ -4,5 +4,7 @@
     {
         Account FindByLogin(string login);
         void Save(Account account);
+
+        AccountId NextId();
     }
 }
