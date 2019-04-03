@@ -7,7 +7,7 @@
         /// </summary>
         /// <param name="name">Player name.</param>
         /// <returns>Player instance.</returns>
-        Player FindByName(AccountId accountId, string name);
+        Player FindByName(string name);
         void Save(Player player);
 
         PlayerId NextId();

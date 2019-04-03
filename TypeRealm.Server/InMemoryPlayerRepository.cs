@@ -9,14 +9,9 @@ namespace TypeRealm.Server
     {
         private readonly List<Player> _players = new List<Player>();
 
-        public Player FindByName(AccountId accountId, string name)
+        public Player FindByName(string name)
         {
-            var player = _players.SingleOrDefault(p => p.Name == name);
-
-            if (player?.AccountId != accountId)
-                return null;
-
-            return player;
+            return _players.SingleOrDefault(p => p.Name == name);
         }
 
         public PlayerId NextId()

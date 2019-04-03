@@ -40,7 +40,7 @@ namespace TypeRealm.Server
                 return null;
             }
 
-            var player = _playerRepository.FindByName(account.AccountId, playerName);
+            var player = _playerRepository.FindByName(playerName);
             if (player == null)
             {
                 var playerId = _playerRepository.NextId();
@@ -50,6 +50,12 @@ namespace TypeRealm.Server
                     playerId, playerName);
 
                 _playerRepository.Save(player);
+            }
+
+            if (player.AccountId != account.AccountId)
+            {
+                _logger.Log($"{login} tried to create a player with a name that already exists on account {account.AccountId}.");
+                return null;
             }
 
             return player.PlayerId;
