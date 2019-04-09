@@ -30,6 +30,7 @@ namespace TypeRealm.ConsoleApp
                 client.Connect(server, Port);
 
                 var stream = client.GetStream();
+                var isConnected = true;
 
                 Task.Run(() =>
                 {
@@ -40,19 +41,20 @@ namespace TypeRealm.ConsoleApp
 
                         if (message is Disconnected disconnected)
                         {
-                            Console.WriteLine($"You have been disconnected. Reason: {disconnected.Reason.ToString()}");
+                            Console.WriteLine($"SERVER: You have been disconnected. Reason: {disconnected.Reason.ToString()}");
+                            Console.WriteLine("Stopped waiting for messages from server.");
+                            isConnected = false;
                             return;
                         }
 
                         if (message is Say say)
                         {
-                            Console.WriteLine($"SERVER SAID: {say.Message}");
-                            Console.ReadLine();
+                            Console.WriteLine($"SERVER: {say.Message}");
                         }
                     }
                 });
 
-                while (true)
+                while (isConnected)
                 {
                     MessageSerializer.Write(stream, new Authorize
                     {
@@ -68,10 +70,12 @@ namespace TypeRealm.ConsoleApp
                     if (command == "exit")
                     {
                         MessageSerializer.Write(stream, new Quit());
-                        Console.ReadLine();
-                        return; // TODO: Return only if disconnect has been acknowledged. Return to main menu.
+                        Console.WriteLine("Sent quit message.");
                     }
                 }
+
+                Console.WriteLine("Stopped sending messages loop. Press ENTER to exit.");
+                Console.ReadLine();
             }
         }
     }
