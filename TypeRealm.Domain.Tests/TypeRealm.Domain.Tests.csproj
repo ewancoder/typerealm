@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="AccountTests.cs" />
     <Compile Include="Fixture.cs" />
+    <Compile Include="PlayerNameTests.cs" />
     <Compile Include="PlayerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

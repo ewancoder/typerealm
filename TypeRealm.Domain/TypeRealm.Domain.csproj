@@ -41,6 +41,7 @@
     <Compile Include="IPlayerRepository.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerId.cs" />
+    <Compile Include="PlayerName.cs" />
     <Compile Include="Primitive.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
