@@ -1,5 +1,4 @@
 ﻿using Moq;
-using System;
 using TypeRealm.Domain;
 using Xunit;
 
@@ -27,7 +26,7 @@ namespace TypeRealm.Server.Tests
                 .Setup(x => x.NextId())
                 .Returns(accountId);
 
-            _sut.AuthorizeOrCreate("login", "password", "playerName");
+            _sut.AuthorizeOrCreate("login", "password", Fixture.PlayerName());
 
             _accountRepositoryMock.Verify(x => x.Save(It.Is<Account>(
                 a => a.Login == "login"
@@ -42,7 +41,7 @@ namespace TypeRealm.Server.Tests
                 .Setup(x => x.FindByLogin("login"))
                 .Returns(new Account(AccountId.New(), "login", "another-password"));
 
-            var playerId = _sut.AuthorizeOrCreate("login", "password", "playerName");
+            var playerId = _sut.AuthorizeOrCreate("login", "password", Fixture.PlayerName());
 
             Assert.Null(playerId);
         }
@@ -61,12 +60,13 @@ namespace TypeRealm.Server.Tests
                 .Setup(x => x.NextId())
                 .Returns(playerId);
 
-            var authorizedPlayerId = _sut.AuthorizeOrCreate("login", "password", "playerName");
+            var playerName = Fixture.PlayerName();
+            var authorizedPlayerId = _sut.AuthorizeOrCreate("login", "password", playerName);
 
             _playerRepositoryMock.Verify(x => x.Save(It.Is<Player>(
                 p => p.PlayerId == playerId
                 && p.AccountId == accountId
-                && p.Name == "playerName")));
+                && p.Name == playerName)));
 
             Assert.Equal(playerId, authorizedPlayerId);
         }
@@ -83,11 +83,13 @@ namespace TypeRealm.Server.Tests
                 .Setup(x => x.FindByLogin("login"))
                 .Returns(new Account(accountId, "login", "password"));
 
-            _playerRepositoryMock
-                .Setup(x => x.FindByName("playerName"))
-                .Returns(anotherAccount.CreatePlayer(playerId, "playerName"));
+            var playerName = Fixture.PlayerName();
 
-            var authorizedPlayerId = _sut.AuthorizeOrCreate("login", "password", "playerName");
+            _playerRepositoryMock
+                .Setup(x => x.FindByName(playerName))
+                .Returns(anotherAccount.CreatePlayer(playerId, playerName));
+
+            var authorizedPlayerId = _sut.AuthorizeOrCreate("login", "password", playerName);
 
             Assert.Null(authorizedPlayerId);
         }
@@ -104,11 +106,13 @@ namespace TypeRealm.Server.Tests
                 .Setup(x => x.FindByLogin("login"))
                 .Returns(account);
 
-            _playerRepositoryMock
-                .Setup(x => x.FindByName("playerName"))
-                .Returns(account.CreatePlayer(playerId, "playerName"));
+            var playerName = Fixture.PlayerName();
 
-            var authorizedPlayerId = _sut.AuthorizeOrCreate("login", "password", "playerName");
+            _playerRepositoryMock
+                .Setup(x => x.FindByName(playerName))
+                .Returns(account.CreatePlayer(playerId, playerName));
+
+            var authorizedPlayerId = _sut.AuthorizeOrCreate("login", "password", playerName);
 
             Assert.Equal(playerId, authorizedPlayerId);
         }

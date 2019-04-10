@@ -22,11 +22,12 @@ namespace TypeRealm.Domain.Tests
             var account = Fixture.Account();
             var playerId = PlayerId.New();
 
-            var player = account.CreatePlayer(playerId, "name");
+            var playerName = Fixture.PlayerName();
+            var player = account.CreatePlayer(playerId, playerName);
 
             Assert.Equal(account.AccountId, player.AccountId);
             Assert.Equal(playerId, player.PlayerId);
-            Assert.Equal("name", player.Name);
+            Assert.Equal(playerName, player.Name);
         }
     }
 }

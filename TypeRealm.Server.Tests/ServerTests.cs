@@ -66,7 +66,10 @@ namespace TypeRealm.Server.Tests
 
             connectionMock
                 .Setup(c => c.Read())
-                .Returns(new Authorize());
+                .Returns(new Authorize
+                {
+                    PlayerName = "player name"
+                });
 
             CreateServer();
 
@@ -86,7 +89,10 @@ namespace TypeRealm.Server.Tests
 
             connectionMock
                 .Setup(c => c.Read())
-                .Returns(new Authorize());
+                .Returns(new Authorize
+                {
+                    PlayerName = "player name"
+                });
 
             CreateServer();
 
@@ -104,6 +110,8 @@ namespace TypeRealm.Server.Tests
                 .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
                 .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
 
+            var playerName = Fixture.PlayerName();
+
             var index = 0;
             connectionMock
                 .Setup(c => c.Read())
@@ -117,7 +125,7 @@ namespace TypeRealm.Server.Tests
                             {
                                 Login = "login",
                                 Password = "password",
-                                PlayerName = "playerName"
+                                PlayerName = playerName.Value
                             };
                         default:
                             Thread.Sleep(Timeout.Infinite);
@@ -127,7 +135,7 @@ namespace TypeRealm.Server.Tests
 
             var playerId = PlayerId.New();
             _authorizationServiceMock
-                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
 
             CreateServer();
@@ -146,6 +154,8 @@ namespace TypeRealm.Server.Tests
                 .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
                 .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
 
+            var playerName = Fixture.PlayerName();
+
             var index = 0;
             connectionMock
                 .Setup(c => c.Read())
@@ -159,7 +169,7 @@ namespace TypeRealm.Server.Tests
                             {
                                 Login = "login",
                                 Password = "password",
-                                PlayerName = "playerName"
+                                PlayerName = playerName.Value
                             };
                         case 1:
                             index++;
@@ -172,7 +182,7 @@ namespace TypeRealm.Server.Tests
 
             var playerId = PlayerId.New();
             _authorizationServiceMock
-                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
 
             CreateServer();
@@ -191,6 +201,8 @@ namespace TypeRealm.Server.Tests
                 .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
                 .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
 
+            var playerName = Fixture.PlayerName();
+
             var index = 0;
             connectionMock
                 .Setup(c => c.Read())
@@ -204,7 +216,7 @@ namespace TypeRealm.Server.Tests
                             {
                                 Login = "login",
                                 Password = "password",
-                                PlayerName = "playerName"
+                                PlayerName = playerName.Value
                             };
                         case 1:
                             index++;
@@ -217,7 +229,7 @@ namespace TypeRealm.Server.Tests
 
             var playerId = PlayerId.New();
             _authorizationServiceMock
-                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
 
             CreateServer();
@@ -236,6 +248,8 @@ namespace TypeRealm.Server.Tests
                 .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
                 .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
 
+            var playerName = Fixture.PlayerName();
+
             var index = 0;
             connectionMock
                 .Setup(c => c.Read())
@@ -249,7 +263,7 @@ namespace TypeRealm.Server.Tests
                             {
                                 Login = "login",
                                 Password = "password",
-                                PlayerName = "playerName"
+                                PlayerName = playerName.Value
                             };
                         case 1:
                             index++;
@@ -262,7 +276,7 @@ namespace TypeRealm.Server.Tests
 
             var playerId = PlayerId.New();
             _authorizationServiceMock
-                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
 
             CreateServer();
@@ -281,6 +295,8 @@ namespace TypeRealm.Server.Tests
                 .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
                 .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
 
+            var playerName = Fixture.PlayerName();
+
             var index = 0;
             connectionMock
                 .Setup(c => c.Read())
@@ -294,7 +310,7 @@ namespace TypeRealm.Server.Tests
                             {
                                 Login = "login",
                                 Password = "password",
-                                PlayerName = "playerName"
+                                PlayerName = playerName.Value
                             };
                         case 1:
                             index++;
@@ -310,7 +326,7 @@ namespace TypeRealm.Server.Tests
 
             var playerId = PlayerId.New();
             _authorizationServiceMock
-                .Setup(a => a.AuthorizeOrCreate("login", "password", "playerName"))
+                .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
 
             CreateServer();

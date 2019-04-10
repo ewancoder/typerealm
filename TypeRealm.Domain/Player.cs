@@ -2,7 +2,7 @@
 {
     public sealed class Player
     {
-        internal Player(PlayerId playerId, AccountId accountId, string name)
+        internal Player(PlayerId playerId, AccountId accountId, PlayerName name)
         {
             PlayerId = playerId;
             AccountId = accountId;
@@ -11,6 +11,6 @@
 
         public PlayerId PlayerId { get; }
         public AccountId AccountId { get; }
-        public string Name { get; }
+        public PlayerName Name { get; }
     }
 }

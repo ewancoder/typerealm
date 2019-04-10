@@ -20,7 +20,7 @@ namespace TypeRealm.Server
         }
 
         public PlayerId AuthorizeOrCreate(
-            string login, string password, string playerName)
+            string login, string password, PlayerName playerName)
         {
             var account = _accountRepository.FindByLogin(login);
             if (account == null)

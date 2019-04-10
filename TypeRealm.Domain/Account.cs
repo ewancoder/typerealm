@@ -13,7 +13,7 @@
         public string Login { get; }
         public string Password { get; }
 
-        public Player CreatePlayer(PlayerId playerId, string name)
+        public Player CreatePlayer(PlayerId playerId, PlayerName name)
         {
             return new Player(playerId, AccountId, name);
         }

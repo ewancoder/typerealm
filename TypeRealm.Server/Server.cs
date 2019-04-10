@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeRealm.Domain;
 using TypeRealm.Messages;
 
 namespace TypeRealm.Server
@@ -45,11 +46,13 @@ namespace TypeRealm.Server
             if (authorizeMessage == null)
                 return;
 
+            var playerName = new PlayerName(authorizeMessage.PlayerName);
+
             ConnectedClient client = null;
             lock (_lock)
             {
                 var playerId = _authorizationService.AuthorizeOrCreate(
-                    authorizeMessage.Login, authorizeMessage.Password, authorizeMessage.PlayerName);
+                    authorizeMessage.Login, authorizeMessage.Password, playerName);
 
                 if (playerId == null)
                 {
