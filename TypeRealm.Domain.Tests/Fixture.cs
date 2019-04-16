@@ -13,5 +13,10 @@ namespace TypeRealm.Domain.Tests
         {
             return new Account(AccountId.New(), "login", "password");
         }
+
+        public static LocationId LocationId()
+        {
+            return new LocationId(1);
+        }
     }
 }

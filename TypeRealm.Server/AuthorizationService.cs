@@ -1,22 +1,24 @@
-﻿using System;
-using TypeRealm.Domain;
+﻿using TypeRealm.Domain;
 
 namespace TypeRealm.Server
 {
     internal sealed class AuthorizationService : IAuthorizationService
     {
+        private readonly ILogger _logger;
         private readonly IAccountRepository _accountRepository;
         private readonly IPlayerRepository _playerRepository;
-        private readonly ILogger _logger;
+        private readonly ILocationStore _locationStore;
 
         public AuthorizationService(
+            ILogger logger,
             IAccountRepository accountRepository,
             IPlayerRepository playerRepository,
-            ILogger logger)
+            ILocationStore locationStore)
         {
+            _logger = logger;
             _accountRepository = accountRepository;
             _playerRepository = playerRepository;
-            _logger = logger;
+            _locationStore = locationStore;
         }
 
         public PlayerId AuthorizeOrCreate(
@@ -44,10 +46,11 @@ namespace TypeRealm.Server
             if (player == null)
             {
                 var playerId = _playerRepository.NextId();
+                var locationId = _locationStore.GetStartingLocationId();
 
                 // Create a new player.
                 player = account.CreatePlayer(
-                    playerId, playerName);
+                    playerId, playerName, locationId);
 
                 _playerRepository.Save(player);
             }

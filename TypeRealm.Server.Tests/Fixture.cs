@@ -1,4 +1,5 @@
-﻿using TypeRealm.Domain;
+﻿using System;
+using TypeRealm.Domain;
 
 namespace TypeRealm.Server.Tests
 {
@@ -7,6 +8,11 @@ namespace TypeRealm.Server.Tests
         public static PlayerName PlayerName()
         {
             return new PlayerName("player name");
+        }
+
+        public static LocationId LocationId()
+        {
+            return new LocationId(1);
         }
     }
 }

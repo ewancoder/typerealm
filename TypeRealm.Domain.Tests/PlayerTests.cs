@@ -10,12 +10,14 @@ namespace TypeRealm.Domain.Tests
             var playerId = PlayerId.New();
             var accountId = AccountId.New();
             var playerName = Fixture.PlayerName();
+            var locationId = Fixture.LocationId();
 
-            var player = new Player(playerId, accountId, playerName);
+            var player = new Player(playerId, accountId, playerName, locationId);
 
             Assert.Equal(playerId, player.PlayerId);
             Assert.Equal(accountId, player.AccountId);
             Assert.Equal(playerName, player.Name);
+            Assert.Equal(locationId, player.LocationId);
         }
     }
 }

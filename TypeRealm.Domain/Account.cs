@@ -13,9 +13,9 @@
         public string Login { get; }
         public string Password { get; }
 
-        public Player CreatePlayer(PlayerId playerId, PlayerName name)
+        public Player CreatePlayer(PlayerId playerId, PlayerName name, LocationId locationId)
         {
-            return new Player(playerId, AccountId, name);
+            return new Player(playerId, AccountId, name, locationId);
         }
     }
 }

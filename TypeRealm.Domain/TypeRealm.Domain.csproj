@@ -36,9 +36,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountId.cs" />
+    <Compile Include="Distance.cs" />
     <Compile Include="IAccountRepository.cs" />
     <Compile Include="Account.cs" />
+    <Compile Include="ILocationStore.cs" />
     <Compile Include="IPlayerRepository.cs" />
+    <Compile Include="LocationId.cs" />
+    <Compile Include="MovementInformation.cs" />
+    <Compile Include="Road.cs" />
+    <Compile Include="RoadDirection.cs" />
+    <Compile Include="RoadExtensions.cs" />
+    <Compile Include="RoadId.cs" />
+    <Compile Include="RoadPoint.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerId.cs" />
     <Compile Include="PlayerName.cs" />
