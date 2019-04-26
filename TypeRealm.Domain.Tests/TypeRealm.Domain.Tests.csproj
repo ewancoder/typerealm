@@ -54,6 +54,7 @@
     <Compile Include="Fixture.cs" />
     <Compile Include="PlayerNameTests.cs" />
     <Compile Include="PlayerTests.cs" />
+    <Compile Include="PrimitiveTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

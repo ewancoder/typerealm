@@ -30,5 +30,21 @@ namespace TypeRealm.Domain
         {
             return Value.ToString();
         }
+
+        public static bool operator ==(Primitive<TValue> left, Primitive<TValue> right)
+        {
+            if (ReferenceEquals(left, null))
+            {
+                if (ReferenceEquals(right, null))
+                    return true;
+
+                return false;
+            }
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Primitive<TValue> left, Primitive<TValue> right)
+            => !(left == right);
     }
 }
