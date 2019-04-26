@@ -7,7 +7,7 @@ namespace TypeRealm.Domain
         public AccountId(Guid value) : base(value)
         {
             if (value == Guid.Empty)
-                throw new ArgumentException("Account identity cannot be empty.");
+                throw new ArgumentException("Account identity cannot be empty.", nameof(value));
         }
 
         public static AccountId New()

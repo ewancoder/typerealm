@@ -50,8 +50,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountIdTests.cs" />
     <Compile Include="AccountTests.cs" />
     <Compile Include="Fixture.cs" />
+    <Compile Include="PlayerIdTests.cs" />
     <Compile Include="PlayerNameTests.cs" />
     <Compile Include="PlayerTests.cs" />
     <Compile Include="PrimitiveTests.cs" />

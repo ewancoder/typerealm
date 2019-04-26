@@ -1,5 +1,4 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 
 namespace TypeRealm.Domain.Tests
 {
@@ -20,9 +19,10 @@ namespace TypeRealm.Domain.Tests
         public void ShouldCreatePlayer()
         {
             var account = Fixture.Account();
-            var playerId = PlayerId.New();
 
+            var playerId = PlayerId.New();
             var playerName = Fixture.PlayerName();
+
             var player = account.CreatePlayer(playerId, playerName);
 
             Assert.Equal(account.AccountId, player.AccountId);

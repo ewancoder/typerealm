@@ -1,4 +1,6 @@
-﻿namespace TypeRealm.Domain.Tests
+﻿using System;
+
+namespace TypeRealm.Domain.Tests
 {
     internal static class Fixture
     {
