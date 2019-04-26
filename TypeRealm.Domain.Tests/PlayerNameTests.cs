@@ -6,9 +6,9 @@ namespace TypeRealm.Domain.Tests
     public class PlayerNameTests
     {
         [Fact]
-        public void ShouldThrowWhenNull()
+        public void ShouldBePrimitive()
         {
-            Assert.Throws<ArgumentNullException>(() => new PlayerName(null));
+            Assert.IsAssignableFrom<Primitive<string>>(Fixture.PlayerName());
         }
 
         [Fact]
