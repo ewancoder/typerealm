@@ -17,7 +17,8 @@ namespace TypeRealm.Domain
 
         public sealed override bool Equals(object obj)
         {
-            return obj is Primitive<TValue> other
+            return GetType() == obj?.GetType() // Test that types are exactly the same.
+                && obj is Primitive<TValue> other
                 && EqualityComparer<TValue>.Default.Equals(Value, other.Value);
         }
 

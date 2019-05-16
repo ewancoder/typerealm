@@ -7,8 +7,8 @@ namespace TypeRealm.Domain.Tests
         [Fact]
         public void ShouldCreatePlayer()
         {
-            var playerId = PlayerId.New();
-            var accountId = AccountId.New();
+            var playerId = Fixture.PlayerId();
+            var accountId = Fixture.AccountId();
             var playerName = Fixture.PlayerName();
             var locationId = Fixture.LocationId();
 
