@@ -1,31 +1,26 @@
 ﻿using System;
-using System.IO;
-using System.Net.Sockets;
+using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.Messages;
 
 namespace TypeRealm.ConsoleApp
 {
     public sealed class Connection : IDisposable
     {
-        private readonly string _server;
-        private readonly int _port;
+        private readonly IConnectionFactory _connectionFactory;
         private readonly Authorize _authorizeMessage;
-        private TcpClient _client;
 
-        public Connection(string server, int port, Authorize authorizeMessage)
+        public Connection(IConnectionFactory connectionFactory, Authorize authorizeMessage)
         {
-            _server = server;
-            _port = port;
+            _connectionFactory = connectionFactory;
             _authorizeMessage = authorizeMessage;
-            _client = new TcpClient();
         }
 
-        public Stream Stream { get; private set; }
+        public INetworkConnection NetworkConnection { get; private set; }
 
         public object ReceiveMessage()
         {
             // TODO: Add pinging and reconnecting if connection is lost.
-            return MessageSerializer.Read(Stream);
+            return NetworkConnection.Read();
         }
 
         public void Send(object message)
@@ -35,7 +30,7 @@ namespace TypeRealm.ConsoleApp
                 try
                 {
                     // TODO: Add idempotency key.
-                    MessageSerializer.Write(Stream, message);
+                    NetworkConnection.Write(message);
                     return;
                 }
                 catch
@@ -50,15 +45,13 @@ namespace TypeRealm.ConsoleApp
 
         public void ReconnectAndAuthorize()
         {
-            DisposeConnection();
+            Dispose();
 
             for (var i = 1; i <= 5; i++)
             {
                 try
                 {
-                    _client = new TcpClient();
-                    _client.Connect(_server, _port);
-                    Stream = _client.GetStream();
+                    NetworkConnection = _connectionFactory.Connect();
 
                     Send(_authorizeMessage);
 
@@ -66,29 +59,14 @@ namespace TypeRealm.ConsoleApp
                 }
                 catch
                 {
-                    DisposeConnection();
+                    Dispose();
                 }
             }
         }
 
         public void Dispose()
         {
-            DisposeConnection();
-        }
-
-        private void DisposeConnection()
-        {
-            if (Stream != null)
-            {
-                Stream.Dispose();
-                Stream = null;
-            }
-
-            if (_client != null)
-            {
-                _client.Dispose();
-                _client = null;
-            }
+            NetworkConnection?.Dispose();
         }
     }
 }

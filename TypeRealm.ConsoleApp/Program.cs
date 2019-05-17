@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.Messages;
 
 namespace TypeRealm.ConsoleApp
@@ -31,7 +32,9 @@ namespace TypeRealm.ConsoleApp
                 PlayerName = playerName
             };
 
-            using (var connection = new Connection(server, Port, authorize))
+            var connectionFactory = new TcpConnectionFactory(server, Port);
+
+            using (var connection = new Connection(connectionFactory, authorize))
             {
                 connection.ReconnectAndAuthorize();
                 var isConnected = true;
