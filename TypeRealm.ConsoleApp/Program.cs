@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using TypeRealm.Messages;
 
@@ -25,11 +24,16 @@ namespace TypeRealm.ConsoleApp
             Console.Write("Player name: ");
             var playerName = Console.ReadLine();
 
-            using (var client = new TcpClient())
+            var authorize = new Authorize
             {
-                client.Connect(server, Port);
+                Login = login,
+                Password = password,
+                PlayerName = playerName
+            };
 
-                var stream = client.GetStream();
+            using (var connection = new Connection(server, Port, authorize))
+            {
+                connection.ReconnectAndAuthorize();
                 var isConnected = true;
 
                 Task.Run(() =>
@@ -37,7 +41,7 @@ namespace TypeRealm.ConsoleApp
                     while (true)
                     {
                         // TODO: Add try/catch.
-                        var message = MessageSerializer.Read(stream);
+                        var message = connection.ReceiveMessage();
 
                         if (message is Disconnected disconnected)
                         {
@@ -56,20 +60,14 @@ namespace TypeRealm.ConsoleApp
 
                 while (isConnected)
                 {
-                    MessageSerializer.Write(stream, new Authorize
-                    {
-                        Login = login,
-                        Password = password,
-                        PlayerName = playerName
-                    });
-
+                    connection.Send(new Authorize());
                     Console.WriteLine("Sent Authorize message.");
 
                     var command = Console.ReadLine();
 
                     if (command == "exit")
                     {
-                        MessageSerializer.Write(stream, new Quit());
+                        connection.Send(new Quit());
                         Console.WriteLine("Sent quit message.");
                     }
                 }
