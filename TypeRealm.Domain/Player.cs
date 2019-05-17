@@ -23,10 +23,23 @@ namespace TypeRealm.Domain
         public LocationId LocationId { get; private set; }
         public MovementInformation MovementInformation { get; private set; }
 
+        public static Player InState(
+            PlayerId playerId,
+            AccountId accountId,
+            PlayerName name,
+            LocationId locationId,
+            MovementInformation movementInformation)
+        {
+            var player = new Player(playerId, accountId, name, locationId);
+            player.MovementInformation = movementInformation;
+
+            return player;
+        }
+
         public void EnterRoad(Road road)
         {
             if (MovementInformation != null)
-                throw new InvalidOperationException($"Player {PlayerId} is already moving at {MovementInformation.RoadId} road.");
+                throw new InvalidOperationException($"Player {PlayerId} is already moving at {MovementInformation.Road.RoadId} road.");
 
             MovementInformation = MovementInformation.EnterRoadFrom(road, LocationId);
         }

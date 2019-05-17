@@ -28,5 +28,29 @@ namespace TypeRealm.Domain.Tests
         {
             return new LocationId(1);
         }
+
+        public static RoadId RoadId()
+        {
+            return new RoadId(1);
+        }
+
+        public static Player PlayerAt(LocationId locationId)
+        {
+            return Player.InState(
+                PlayerId(), AccountId(), PlayerName(), locationId, null);
+        }
+
+        public static Player PlayerAt(Road road, Distance progress, RoadDirection direction)
+        {
+            return Player.InState(
+                PlayerId(), AccountId(), PlayerName(), LocationId(), MovementInformationAt(road, progress, direction));
+        }
+
+        public static MovementInformation MovementInformationAt(Road road, Distance progress, RoadDirection direction)
+        {
+            return MovementInformation
+                .EnterRoadFrom(road, direction == RoadDirection.Forward ? road.FromPoint.LocationId : road.ToPoint.LocationId)
+                .Move(progress);
+        }
     }
 }

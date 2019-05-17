@@ -4,55 +4,55 @@ namespace TypeRealm.Domain
 {
     public sealed class MovementInformation
     {
-        private readonly Road _road;
-        private readonly Distance _progress;
-        private readonly RoadDirection _direction;
-
         private MovementInformation(Road road, Distance progress, RoadDirection direction)
         {
-            _road = road;
-            _progress = progress;
-            _direction = direction;
+            Road = road;
+            Progress = progress;
+            Direction = direction;
         }
 
-        public RoadId RoadId => _road.RoadId;
-        public LocationId ArrivalLocationId => _road.GetArrivalLocationId(_direction);
-        public bool HasArrived => _progress == _road.GetDistanceFor(_direction);
+        public Road Road { get; }
+        public Distance Progress { get; }
+        public RoadDirection Direction { get; }
+
+        public LocationId ArrivalLocationId => Road.GetArrivalLocationId(Direction);
+        public bool HasArrived => Progress == Road.GetDistanceFor(Direction);
 
         public MovementInformation Move(Distance progress)
         {
-            var newProgress = _progress.Add(progress);
-            var distance = _road.GetDistanceFor(_direction);
+            var newProgress = Progress.Add(progress);
+            var distance = Road.GetDistanceFor(Direction);
 
             if (newProgress.IsGreaterThan(distance))
                 throw new InvalidOperationException("Can't progress beyond distance.");
 
             return new MovementInformation(
-                _road, _progress, _direction);
+                Road, newProgress, Direction);
         }
 
         public MovementInformation TurnAround()
         {
-            var newDirection = _direction.Flip();
+            var newDirection = Direction.Flip();
 
-            if (_progress.IsZero())
+            if (Progress.IsZero())
             {
-                var newDistance = _road.GetDistanceFor(newDirection);
-                return new MovementInformation(_road, newDistance, newDirection);
+                var newDistance = Road.GetDistanceFor(newDirection);
+                return new MovementInformation(Road, newDistance, newDirection);
             }
 
             // Math.
             {
                 // Don't remove 100d part. It specifies decimal type here.
-                var oldDistanceValue = _road.GetDistanceFor(_direction).Value;
-                var oldProgressValue = _progress.Value;
+                var oldDistanceValue = Road.GetDistanceFor(Direction).Value;
+                var oldProgressValue = Progress.Value;
                 var oldProgressPercentage = oldProgressValue * 100d / oldDistanceValue;
+                var newProgressPercentage = 100 - oldProgressPercentage;
 
-                var newDistanceValue = _road.GetDistanceFor(newDirection).Value;
-                var newProgressValue = newDistanceValue * oldProgressPercentage / 100d;
+                var newDistanceValue = Road.GetDistanceFor(newDirection).Value;
+                var newProgressValue = newDistanceValue * newProgressPercentage / 100d;
                 var newProgress = new Distance(Round(newProgressValue));
 
-                return new MovementInformation(_road, newProgress, newDirection);
+                return new MovementInformation(Road, newProgress, newDirection);
             }
         }
 

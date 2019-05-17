@@ -22,5 +22,8 @@ namespace TypeRealm.Domain
         }
 
         public static Distance Zero => new Distance(0);
+
+        public static implicit operator Distance(int value)
+            => new Distance(value);
     }
 }
