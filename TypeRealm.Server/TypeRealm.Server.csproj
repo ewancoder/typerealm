@@ -48,6 +48,7 @@
     <Compile Include="ILogger.cs" />
     <Compile Include="IMessageDispatcher.cs" />
     <Compile Include="InMemoryAccountRepository.cs" />
+    <Compile Include="InMemoryLocationStore.cs" />
     <Compile Include="InMemoryPlayerRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

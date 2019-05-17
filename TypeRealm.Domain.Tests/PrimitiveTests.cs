@@ -19,6 +19,19 @@ namespace TypeRealm.Domain.Tests
             }
         }
 
+        private sealed class AnotherPrimitive : Primitive<int>
+        {
+            public AnotherPrimitive(int value) : base(value)
+            {
+            }
+        }
+
+        [Fact]
+        public void TwoDifferentTypesShouldNotBeEqual()
+        {
+            Assert.False(new AnotherPrimitive(1).Equals(new TestValuePrimitive(1)));
+        }
+
         [Fact]
         public void ShouldThrowWhenValueIsNull()
         {
