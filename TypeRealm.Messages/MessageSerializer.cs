@@ -14,8 +14,9 @@ namespace TypeRealm.Messages
             typeof(EnterRoad),
             typeof(Say),
             typeof(Status),
-            typeof(Quit),
-            typeof(Move)
+            typeof(Move),
+            typeof(TurnAround),
+            typeof(Quit)
         });
 
         public static object Read(Stream stream)

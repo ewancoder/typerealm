@@ -138,7 +138,7 @@ namespace TypeRealm.Server
                 {
                     RoadId = player.MovementInformation.Road.RoadId,
                     Direction = (MovementDirection)player.MovementInformation.Direction,
-                    ProgressPercentage = player.MovementInformation.Progress
+                    Progress = player.MovementInformation.Progress
                 };
             }
 

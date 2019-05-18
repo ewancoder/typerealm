@@ -12,6 +12,6 @@ namespace TypeRealm.Messages.Movement
         public MovementDirection Direction { get; set; }
 
         [ProtoMember(3)]
-        public int ProgressPercentage { get; set; }
+        public int Progress { get; set; }
     }
 }

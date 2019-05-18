@@ -13,5 +13,10 @@ namespace TypeRealm.ConsoleApp
         {
             Console.WriteLine(value);
         }
+
+        public void WriteLine()
+        {
+            Console.WriteLine();
+        }
     }
 }

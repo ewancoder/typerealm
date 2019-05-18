@@ -11,9 +11,10 @@ namespace TypeRealm.ConsoleApp
     {
         private readonly object _lock = new object();
         private readonly IOutput _output;
-        private IConnection _connection;
-
         private readonly Queue<string> _notifications = new Queue<string>();
+
+        private IConnection _connection;
+        private Status _status;
 
         public Game(IConnectionFactory connectionFactory, IOutput output)
         {
@@ -70,10 +71,31 @@ namespace TypeRealm.ConsoleApp
             {
                 _output.Clear();
 
+                if (_status == null)
+                {
+                    _output.WriteLine("Loading...");
+                    return;
+                }
+
                 _output.WriteLine("Notifications:");
                 foreach (var notification in _notifications)
                 {
                     _output.WriteLine(notification);
+                }
+                _output.WriteLine();
+
+                _output.WriteLine($"Name: {_status.Name}");
+                _output.WriteLine($"Location: {_status.LocationId}");
+
+                if (_status.MovementStatus == null)
+                {
+                    _output.WriteLine("Not moving.");
+                }
+                else
+                {
+                    _output.WriteLine($"Road: {_status.MovementStatus.RoadId}");
+                    _output.WriteLine($"Direction: {_status.MovementStatus.Direction.ToString()}");
+                    _output.WriteLine($"Progress: {_status.MovementStatus.Progress}");
                 }
             }
         }
@@ -102,6 +124,13 @@ namespace TypeRealm.ConsoleApp
 
         private void Dispatch(object message)
         {
+            if (message is Status status)
+            {
+                _status = status;
+                Update();
+                return;
+            }
+
             if (message is Disconnected disconnected)
             {
                 // Stop listening.
