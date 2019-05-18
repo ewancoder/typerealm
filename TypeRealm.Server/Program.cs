@@ -15,7 +15,9 @@ namespace TypeRealm.Server
             var accountRepository = new InMemoryAccountRepository();
             var playerRepository = new InMemoryPlayerRepository();
             var locationStore = new InMemoryLocationStore(new LocationId(1));
-            var messageDispatcher = new EchoMessageDispatcher();
+            var roadStore = new InMemoryRoadStore();
+            var messageDispatcher = new MessageDispatcher(
+                new EchoMessageDispatcher(), playerRepository, roadStore);
             var authorizationService = new AuthorizationService(logger, accountRepository, playerRepository, locationStore);
             var clientListenerFactory = new TcpClientListenerFactory(logger);
 

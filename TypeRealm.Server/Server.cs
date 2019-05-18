@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TypeRealm.Domain;
 using TypeRealm.Messages;
 using TypeRealm.Messages.Movement;
@@ -100,6 +101,9 @@ namespace TypeRealm.Server
 
                         _messageDispatcher.Dispatch(client, message);
                     }
+
+                    // TODO: Update only clients that need update.
+                    UpdateAll();
                 }
             }
             catch (Exception exception)
@@ -110,6 +114,12 @@ namespace TypeRealm.Server
                     _logger.Log($"{client.PlayerId} unexpectedly lost connection.", exception);
                 }
             }
+        }
+
+        private void UpdateAll()
+        {
+            // TODO: Check IsCompleted property to know if every update succeeded.
+            Parallel.ForEach(_connectedClients, SendStatus);
         }
 
         private void SendStatus(ConnectedClient client)

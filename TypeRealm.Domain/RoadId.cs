@@ -12,5 +12,8 @@ namespace TypeRealm.Domain
 
         public static implicit operator int(RoadId roadId)
             => roadId.Value;
+
+        public static implicit operator RoadId(int value)
+            => new RoadId(value);
     }
 }
