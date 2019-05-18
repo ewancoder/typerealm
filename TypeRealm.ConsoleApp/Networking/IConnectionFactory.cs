@@ -2,6 +2,6 @@
 {
     public interface IConnectionFactory
     {
-        INetworkConnection Connect();
+        IConnection Connect();
     }
 }

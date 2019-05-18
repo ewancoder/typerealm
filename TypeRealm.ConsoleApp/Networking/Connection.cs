@@ -1,36 +1,37 @@
-﻿using System;
-using TypeRealm.ConsoleApp.Networking;
-using TypeRealm.Messages;
+﻿using TypeRealm.Messages;
 
-namespace TypeRealm.ConsoleApp
+namespace TypeRealm.ConsoleApp.Networking
 {
-    public sealed class Connection : IDisposable
+    public sealed class Connection : IConnection
     {
         private readonly IConnectionFactory _connectionFactory;
         private readonly Authorize _authorizeMessage;
+        private IConnection _networkConnection;
 
         public Connection(IConnectionFactory connectionFactory, Authorize authorizeMessage)
         {
             _connectionFactory = connectionFactory;
             _authorizeMessage = authorizeMessage;
+            ReconnectAndAuthorize();
+
+            if (_networkConnection == null)
+                throw new ConnectionFailedException();
         }
 
-        public INetworkConnection NetworkConnection { get; private set; }
-
-        public object ReceiveMessage()
+        public object Read()
         {
             // TODO: Add pinging and reconnecting if connection is lost.
-            return NetworkConnection.Read();
+            return _networkConnection.Read();
         }
 
-        public void Send(object message)
+        public void Write(object message)
         {
             for (var i = 1; i <= 5; i++)
             {
                 try
                 {
                     // TODO: Add idempotency key.
-                    NetworkConnection.Write(message);
+                    _networkConnection.Write(message);
                     return;
                 }
                 catch
@@ -43,7 +44,16 @@ namespace TypeRealm.ConsoleApp
             }
         }
 
-        public void ReconnectAndAuthorize()
+        public void Dispose()
+        {
+            if (_networkConnection != null)
+            {
+                _networkConnection.Dispose();
+                _networkConnection = null;
+            }
+        }
+
+        private void ReconnectAndAuthorize()
         {
             Dispose();
 
@@ -51,9 +61,9 @@ namespace TypeRealm.ConsoleApp
             {
                 try
                 {
-                    NetworkConnection = _connectionFactory.Connect();
+                    _networkConnection = _connectionFactory.Connect();
 
-                    Send(_authorizeMessage);
+                    Write(_authorizeMessage);
 
                     break;
                 }
@@ -62,11 +72,6 @@ namespace TypeRealm.ConsoleApp
                     Dispose();
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            NetworkConnection?.Dispose();
         }
     }
 }

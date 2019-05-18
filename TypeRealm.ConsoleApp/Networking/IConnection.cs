@@ -2,7 +2,7 @@
 
 namespace TypeRealm.ConsoleApp.Networking
 {
-    public interface INetworkConnection : IDisposable
+    public interface IConnection : IDisposable
     {
         object Read();
         void Write(object message);

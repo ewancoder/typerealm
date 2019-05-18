@@ -13,7 +13,7 @@ namespace TypeRealm.ConsoleApp.Networking
             _port = port;
         }
 
-        public INetworkConnection Connect()
+        public IConnection Connect()
         {
             var client = new TcpClient();
             client.Connect(_server, _port);

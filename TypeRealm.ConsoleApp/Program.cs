@@ -36,7 +36,6 @@ namespace TypeRealm.ConsoleApp
 
             using (var connection = new Connection(connectionFactory, authorize))
             {
-                connection.ReconnectAndAuthorize();
                 var isConnected = true;
 
                 Task.Run(() =>
@@ -44,7 +43,7 @@ namespace TypeRealm.ConsoleApp
                     while (true)
                     {
                         // TODO: Add try/catch.
-                        var message = connection.ReceiveMessage();
+                        var message = connection.Read();
 
                         if (message is Disconnected disconnected)
                         {
@@ -63,14 +62,14 @@ namespace TypeRealm.ConsoleApp
 
                 while (isConnected)
                 {
-                    connection.Send(new Authorize());
+                    connection.Write(new Authorize());
                     Console.WriteLine("Sent Authorize message.");
 
                     var command = Console.ReadLine();
 
                     if (command == "exit")
                     {
-                        connection.Send(new Quit());
+                        connection.Write(new Quit());
                         Console.WriteLine("Sent quit message.");
                     }
                 }

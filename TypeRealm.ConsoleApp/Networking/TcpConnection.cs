@@ -4,7 +4,7 @@ using TypeRealm.Messages;
 
 namespace TypeRealm.ConsoleApp.Networking
 {
-    public sealed class TcpConnection : INetworkConnection
+    public sealed class TcpConnection : IConnection
     {
         private readonly TcpClient _client;
         private readonly Stream _stream;
