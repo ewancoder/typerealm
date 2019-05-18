@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.Messages;
 
@@ -32,50 +31,21 @@ namespace TypeRealm.ConsoleApp
                 PlayerName = playerName
             };
 
-            var connectionFactory = new TcpConnectionFactory(server, Port);
+            var connectionFactory = new ConnectionFactory(
+                new TcpConnectionFactory(server, Port), authorize);
 
-            using (var connection = new Connection(connectionFactory, authorize))
+            var output = new ConsoleOutput();
+
+            using (var game = new Game(connectionFactory, output))
             {
-                var isConnected = true;
+                Console.CursorVisible = false;
+                game.Update();
 
-                Task.Run(() =>
+                while (game.IsConnected)
                 {
-                    while (true)
-                    {
-                        // TODO: Add try/catch.
-                        var message = connection.Read();
-
-                        if (message is Disconnected disconnected)
-                        {
-                            Console.WriteLine($"SERVER: You have been disconnected. Reason: {disconnected.Reason.ToString()}");
-                            Console.WriteLine("Stopped waiting for messages from server.");
-                            isConnected = false;
-                            return;
-                        }
-
-                        if (message is Say say)
-                        {
-                            Console.WriteLine($"SERVER: {say.Message}");
-                        }
-                    }
-                });
-
-                while (isConnected)
-                {
-                    connection.Write(new Authorize());
-                    Console.WriteLine("Sent Authorize message.");
-
-                    var command = Console.ReadLine();
-
-                    if (command == "exit")
-                    {
-                        connection.Write(new Quit());
-                        Console.WriteLine("Sent quit message.");
-                    }
+                    var key = Console.ReadKey(true);
+                    game.Input(key);
                 }
-
-                Console.WriteLine("Stopped sending messages loop. Press ENTER to exit.");
-                Console.ReadLine();
             }
         }
     }
