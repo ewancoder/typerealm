@@ -19,7 +19,7 @@ namespace TypeRealm.Server
             var authorizationService = new AuthorizationService(logger, accountRepository, playerRepository, locationStore);
             var clientListenerFactory = new TcpClientListenerFactory(logger);
 
-            using (var server = new Server(Port, logger, authorizationService, messageDispatcher, clientListenerFactory))
+            using (var server = new Server(Port, logger, authorizationService, messageDispatcher, playerRepository, clientListenerFactory))
             {
                 Console.ReadLine();
             }

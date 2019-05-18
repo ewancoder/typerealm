@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using ProtoBuf;
+using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.Messages
 {
@@ -10,8 +11,11 @@ namespace TypeRealm.Messages
         {
             typeof(Authorize),
             typeof(Disconnected),
+            typeof(EnterRoad),
             typeof(Say),
-            typeof(Quit)
+            typeof(Status),
+            typeof(Quit),
+            typeof(Move)
         });
 
         public static object Read(Stream stream)

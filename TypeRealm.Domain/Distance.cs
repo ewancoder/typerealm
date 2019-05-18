@@ -11,10 +11,10 @@ namespace TypeRealm.Domain
         }
 
         public Distance Add(Distance distance)
-            => new Distance(Value + distance.Value);
+            => new Distance(Value + distance);
 
         public bool IsGreaterThan(Distance distance)
-            => Value > distance.Value;
+            => Value > distance;
 
         public bool IsZero()
         {
@@ -25,5 +25,8 @@ namespace TypeRealm.Domain
 
         public static implicit operator Distance(int value)
             => new Distance(value);
+
+        public static implicit operator int(Distance distance)
+            => distance.Value;
     }
 }

@@ -2,6 +2,8 @@
 {
     public interface IPlayerRepository
     {
+        Player Find(PlayerId playerId);
+
         /// <summary>
         /// Finds player by name. Name should be globally unique.
         /// </summary>

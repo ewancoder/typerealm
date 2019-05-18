@@ -12,5 +12,8 @@ namespace TypeRealm.Domain
             if (value.Length > 20)
                 throw new ArgumentException("Maximum length of the player name is 20 characters.", nameof(value));
         }
+
+        public static implicit operator string(PlayerName playerName)
+            => playerName.Value;
     }
 }

@@ -14,13 +14,20 @@ namespace TypeRealm.Server.Tests
         private readonly int _port = 10;
         private readonly Mock<IAuthorizationService> _authorizationServiceMock;
         private readonly Mock<IMessageDispatcher> _messageDispatcherMock;
+        private readonly Mock<IPlayerRepository> _playerRepositoryMock;
         private readonly Mock<IClientListenerFactory> _clientListenerFactoryMock;
 
         public ServerTests()
         {
             _authorizationServiceMock = new Mock<IAuthorizationService>();
             _messageDispatcherMock = new Mock<IMessageDispatcher>();
+            _playerRepositoryMock = new Mock<IPlayerRepository>();
             _clientListenerFactoryMock = new Mock<IClientListenerFactory>();
+
+            var playerId = PlayerId.New();
+            _playerRepositoryMock
+                .Setup(p => p.Find(Fixture.PlayerId()))
+                .Returns(Fixture.Player());
         }
 
         [Fact]
@@ -133,7 +140,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = PlayerId.New();
+            var playerId = Fixture.PlayerId();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
@@ -142,6 +149,51 @@ namespace TypeRealm.Server.Tests
 
             task.Wait(100);
             Assert.False(task.IsCompleted);
+        }
+
+        [Fact]
+        public void ShouldConnectAndSendStatus()
+        {
+            var connectionMock = new Mock<IConnection>();
+            Task task = null;
+
+            _clientListenerFactoryMock
+                .Setup(p => p.StartListening(_port, It.IsAny<Action<IConnection>>()))
+                .Callback<int, Action<IConnection>>((port, connectionHandler) => task = Task.Run(() => connectionHandler(connectionMock.Object)));
+
+            var playerName = Fixture.PlayerName();
+
+            var index = 0;
+            connectionMock
+                .Setup(c => c.Read())
+                .Returns(() =>
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            index++;
+                            return new Authorize
+                            {
+                                Login = "login",
+                                Password = "password",
+                                PlayerName = playerName.Value
+                            };
+                        default:
+                            Thread.Sleep(Timeout.Infinite);
+                            return null;
+                    }
+                });
+
+            var playerId = Fixture.PlayerId();
+            _authorizationServiceMock
+                .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
+                .Returns(playerId);
+
+            CreateServer();
+            connectionMock.Verify(c => c.Write(It.Is<Status>(
+                x => x.Name == playerName
+                && x.LocationId == Fixture.LocationId()
+                && x.MovementStatus == null)));
         }
 
         [Fact]
@@ -180,7 +232,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = PlayerId.New();
+            var playerId = Fixture.PlayerId();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
@@ -227,7 +279,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = PlayerId.New();
+            var playerId = Fixture.PlayerId();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
@@ -274,7 +326,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = PlayerId.New();
+            var playerId = Fixture.PlayerId();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
@@ -324,7 +376,7 @@ namespace TypeRealm.Server.Tests
                     }
                 });
 
-            var playerId = PlayerId.New();
+            var playerId = Fixture.PlayerId();
             _authorizationServiceMock
                 .Setup(a => a.AuthorizeOrCreate("login", "password", playerName))
                 .Returns(playerId);
@@ -350,6 +402,7 @@ namespace TypeRealm.Server.Tests
                 new Mock<ILogger>().Object,
                 _authorizationServiceMock.Object,
                 _messageDispatcherMock.Object,
+                _playerRepositoryMock.Object,
                 _clientListenerFactoryMock.Object);
         }
     }

@@ -9,6 +9,11 @@ namespace TypeRealm.Server
     {
         private readonly List<Player> _players = new List<Player>();
 
+        public Player Find(PlayerId playerId)
+        {
+            return _players.SingleOrDefault(p => p.PlayerId == playerId);
+        }
+
         public Player FindByName(PlayerName name)
         {
             return _players.SingleOrDefault(p => p.Name == name);

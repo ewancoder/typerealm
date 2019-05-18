@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TypeRealm.Domain;
 using TypeRealm.Messages;
+using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.Server
 {
@@ -11,6 +12,7 @@ namespace TypeRealm.Server
         private readonly List<ConnectedClient> _connectedClients;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMessageDispatcher _messageDispatcher;
+        private readonly IPlayerRepository _playerRepository;
         private readonly object _lock;
 
         private IDisposable _listener;
@@ -20,12 +22,14 @@ namespace TypeRealm.Server
             ILogger logger,
             IAuthorizationService authorizationService,
             IMessageDispatcher messageDispatcher,
+            IPlayerRepository playerRepository,
             IClientListenerFactory clientListenerFactory)
         {
             _logger = logger;
             _connectedClients = new List<ConnectedClient>();
             _authorizationService = authorizationService;
             _messageDispatcher = messageDispatcher;
+            _playerRepository = playerRepository;
             _lock = new object();
 
             _listener = clientListenerFactory.StartListening(port, HandleConnection);
@@ -70,6 +74,8 @@ namespace TypeRealm.Server
                 {
                     _connectedClients.Add(client);
                     _logger.Log($"{client.PlayerId} has connected.");
+
+                    SendStatus(client);
                 }
             }
 
@@ -104,6 +110,39 @@ namespace TypeRealm.Server
                     _logger.Log($"{client.PlayerId} unexpectedly lost connection.", exception);
                 }
             }
+        }
+
+        private void SendStatus(ConnectedClient client)
+        {
+            var player = _playerRepository.Find(client.PlayerId);
+
+            if (player == null)
+                throw new InvalidOperationException($"Player {client.PlayerId} does not exist.");
+
+            var status = MakeStatus(player);
+
+            client.Connection.Write(status);
+        }
+
+        private Status MakeStatus(Player player)
+        {
+            var status = new Status
+            {
+                Name = player.Name,
+                LocationId = player.LocationId
+            };
+
+            if (player.MovementInformation != null)
+            {
+                status.MovementStatus = new MovementStatus
+                {
+                    RoadId = player.MovementInformation.Road.RoadId,
+                    Direction = (MovementDirection)player.MovementInformation.Direction,
+                    ProgressPercentage = player.MovementInformation.Progress
+                };
+            }
+
+            return status;
         }
     }
 }

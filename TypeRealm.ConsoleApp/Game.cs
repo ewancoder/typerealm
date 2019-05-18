@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.Messages;
+using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.ConsoleApp
 {
     public sealed class Game : IDisposable
     {
+        private readonly object _lock = new object();
         private readonly IOutput _output;
         private IConnection _connection;
 
@@ -30,17 +32,49 @@ namespace TypeRealm.ConsoleApp
                 return;
 
             if (key.Key == ConsoleKey.E)
+            {
                 _connection.Write(new Quit());
+                return;
+            }
+
+            if (key.Key == ConsoleKey.R)
+            {
+                _connection.Write(new EnterRoad
+                {
+                    RoadId = 1
+                });
+
+                return;
+            }
+
+            if (key.Key == ConsoleKey.M)
+            {
+                _connection.Write(new Move
+                {
+                    Distance = 1
+                });
+
+                return;
+            }
+
+            if (key.Key == ConsoleKey.T)
+            {
+                _connection.Write(new TurnAround());
+                return;
+            }
         }
 
         public void Update()
         {
-            _output.Clear();
-
-            _output.WriteLine("Notifications:");
-            foreach (var notification in _notifications)
+            lock (_lock)
             {
-                _output.WriteLine(notification);
+                _output.Clear();
+
+                _output.WriteLine("Notifications:");
+                foreach (var notification in _notifications)
+                {
+                    _output.WriteLine(notification);
+                }
             }
         }
 
@@ -55,21 +89,30 @@ namespace TypeRealm.ConsoleApp
 
         private void ListenToServer()
         {
-            while (true)
+            while (IsConnected)
             {
                 var message = _connection.Read();
 
-                if (message is Disconnected disconnected)
+                lock (_lock)
                 {
-                    Disconnect(disconnected.Reason.ToString());
-                    return; // Stop listening.
+                    Dispatch(message);
                 }
+            }
+        }
 
-                if (message is Say say)
-                {
-                    Say(say.Message);
-                    continue;
-                }
+        private void Dispatch(object message)
+        {
+            if (message is Disconnected disconnected)
+            {
+                // Stop listening.
+                Disconnect(disconnected.Reason.ToString());
+                return;
+            }
+
+            if (message is Say say)
+            {
+                Say(say.Message);
+                return;
             }
         }
 
