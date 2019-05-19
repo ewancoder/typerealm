@@ -102,7 +102,7 @@ namespace TypeRealm.Server
                         _messageDispatcher.Dispatch(client, message);
                     }
 
-                    // TODO: Update only clients that need update.
+                    // TODO: Update only clients that need update and maybe use global queue for this.
                     UpdateAll();
                 }
             }
