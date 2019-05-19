@@ -77,7 +77,8 @@ namespace TypeRealm.Server
 
             try
             {
-                SendStatus(client);
+                // TODO: Update only clients that need update and maybe use global queue for this.
+                UpdateAll();
 
                 while (true)
                 {
