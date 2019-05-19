@@ -50,6 +50,13 @@ namespace TypeRealm.ConsoleApp
         {
             var location = _dataStore.GetLocation(status.LocationId);
 
+            _output.WriteLine("Neighbors:");
+            foreach (var neighbor in status.Neighbors)
+            {
+                _output.WriteLine(neighbor);
+            }
+            _output.WriteLine();
+
             _output.WriteLine($"Name: {status.Name}");
             _output.WriteLine($"Location: {location.Name}: {location.Description}");
 

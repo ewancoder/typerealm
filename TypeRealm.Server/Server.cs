@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TypeRealm.Domain;
 using TypeRealm.Messages;
@@ -92,8 +93,8 @@ namespace TypeRealm.Server
 
                             // Used to acknowledge that client has quit.
                             connection.Write(new Disconnected());
-
                             _logger.Log($"{client.PlayerId} gracefully quit.");
+                            UpdateAll();
                             return;
                         }
 
@@ -110,6 +111,7 @@ namespace TypeRealm.Server
                 {
                     _connectedClients.Remove(client);
                     _logger.Log($"{client.PlayerId} unexpectedly lost connection.", exception);
+                    UpdateAll();
                 }
             }
         }
@@ -134,10 +136,17 @@ namespace TypeRealm.Server
 
         private Status MakeStatus(Player player)
         {
+            var neighbors = _connectedClients
+                .Select(c => _playerRepository.Find(c.PlayerId))
+                .Where(c => c.IsAtSamePlaceAs(player) && c.PlayerId != player.PlayerId)
+                .Select(c => c.Name.Value)
+                .ToList();
+
             var status = new Status
             {
                 Name = player.Name,
-                LocationId = player.LocationId
+                LocationId = player.LocationId,
+                Neighbors = neighbors
             };
 
             if (player.MovementInformation != null)

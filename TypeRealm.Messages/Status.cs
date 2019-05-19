@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System.Collections.Generic;
+using ProtoBuf;
 using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.Messages
@@ -14,5 +15,8 @@ namespace TypeRealm.Messages
 
         [ProtoMember(3)]
         public MovementStatus MovementStatus { get; set; }
+
+        [ProtoMember(4)]
+        public List<string> Neighbors { get; set; } = new List<string>();
     }
 }
