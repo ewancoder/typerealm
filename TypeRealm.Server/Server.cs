@@ -73,12 +73,12 @@ namespace TypeRealm.Server
 
                 _connectedClients.Add(client);
                 _logger.Log($"{client.PlayerId} has connected.");
-
-                SendStatus(client);
             }
 
             try
             {
+                SendStatus(client);
+
                 while (true)
                 {
                     var message = connection.Read();
