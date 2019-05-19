@@ -10,15 +10,15 @@ namespace TypeRealm.ConsoleApp
     public sealed class Game : IDisposable
     {
         private readonly object _lock = new object();
-        private readonly IOutput _output;
+        private readonly IPrinter _printer;
         private readonly Queue<string> _notifications = new Queue<string>();
 
         private IConnection _connection;
         private Status _status;
 
-        public Game(IConnectionFactory connectionFactory, IOutput output)
+        public Game(IConnectionFactory connectionFactory, IPrinter printer)
         {
-            _output = output;
+            _printer = printer;
             _connection = connectionFactory.Connect();
             IsConnected = true;
 
@@ -69,34 +69,7 @@ namespace TypeRealm.ConsoleApp
         {
             lock (_lock)
             {
-                _output.Clear();
-
-                if (_status == null)
-                {
-                    _output.WriteLine("Loading...");
-                    return;
-                }
-
-                _output.WriteLine("Notifications:");
-                foreach (var notification in _notifications)
-                {
-                    _output.WriteLine(notification);
-                }
-                _output.WriteLine();
-
-                _output.WriteLine($"Name: {_status.Name}");
-                _output.WriteLine($"Location: {_status.LocationId}");
-
-                if (_status.MovementStatus == null)
-                {
-                    _output.WriteLine("Not moving.");
-                }
-                else
-                {
-                    _output.WriteLine($"Road: {_status.MovementStatus.RoadId}");
-                    _output.WriteLine($"Direction: {_status.MovementStatus.Direction.ToString()}");
-                    _output.WriteLine($"Progress: {_status.MovementStatus.Progress}");
-                }
+                _printer.Print(_status, _notifications);
             }
         }
 
@@ -149,8 +122,7 @@ namespace TypeRealm.ConsoleApp
         {
             IsConnected = false;
 
-            _output.Clear();
-            _output.WriteLine($"Disconnected with reason: {reason}.");
+            _printer.DisconnectedWithReason(reason);
         }
 
         private void Say(string message)

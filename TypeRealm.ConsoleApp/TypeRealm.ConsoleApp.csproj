@@ -38,7 +38,12 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\IDataStore.cs" />
+    <Compile Include="Data\InMemoryDataStore.cs" />
+    <Compile Include="Data\Location.cs" />
+    <Compile Include="Data\Road.cs" />
     <Compile Include="IOutput.cs" />
+    <Compile Include="IPrinter.cs" />
     <Compile Include="Networking\ConnectionFactory.cs" />
     <Compile Include="Networking\Connection.cs" />
     <Compile Include="Networking\ConnectionFailedException.cs" />
@@ -46,6 +51,7 @@
     <Compile Include="Networking\IConnectionFactory.cs" />
     <Compile Include="Networking\IConnection.cs" />
     <Compile Include="ConsoleOutput.cs" />
+    <Compile Include="Printer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\TcpConnection.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeRealm.ConsoleApp.Data;
 using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.Messages;
 
@@ -34,9 +35,12 @@ namespace TypeRealm.ConsoleApp
             var connectionFactory = new ConnectionFactory(
                 new TcpConnectionFactory(server, Port), authorize);
 
-            var output = new ConsoleOutput();
+            var dataStore = new InMemoryDataStore();
 
-            using (var game = new Game(connectionFactory, output))
+            var output = new ConsoleOutput();
+            var printer = new Printer(output, dataStore);
+
+            using (var game = new Game(connectionFactory, printer))
             {
                 Console.CursorVisible = false;
                 game.Update();
