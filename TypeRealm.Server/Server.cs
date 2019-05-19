@@ -71,13 +71,10 @@ namespace TypeRealm.Server
 
                 client = new ConnectedClient(playerId, connection);
 
-                lock (_lock)
-                {
-                    _connectedClients.Add(client);
-                    _logger.Log($"{client.PlayerId} has connected.");
+                _connectedClients.Add(client);
+                _logger.Log($"{client.PlayerId} has connected.");
 
-                    SendStatus(client);
-                }
+                SendStatus(client);
             }
 
             try
