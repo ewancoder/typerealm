@@ -113,7 +113,7 @@ namespace TypeRealm.ConsoleApp
 
             if (message is Say say)
             {
-                Say(say.Message);
+                Notify(say.Message);
                 return;
             }
         }
@@ -125,9 +125,13 @@ namespace TypeRealm.ConsoleApp
             _printer.DisconnectedWithReason(reason);
         }
 
-        private void Say(string message)
+        private void Notify(string message)
         {
             _notifications.Enqueue(message);
+
+            if (_notifications.Count > 5)
+                _notifications.Dequeue();
+
             Update();
         }
     }
