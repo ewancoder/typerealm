@@ -57,8 +57,7 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            Assert.True(task.IsCompleted);
+            AssertCompletes(task);
         }
 
         [Fact]
@@ -80,8 +79,7 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            Assert.True(task.IsCompleted);
+            AssertCompletes(task);
         }
 
         [Fact]
@@ -103,8 +101,10 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            connectionMock.Verify(c => c.Write(It.Is<Disconnected>(d => d.Reason == DisconnectReason.InvalidCredentials)));
+            AssertDelayed(task, () =>
+            {
+                connectionMock.Verify(c => c.Write(It.Is<Disconnected>(d => d.Reason == DisconnectReason.InvalidCredentials)));
+            });
         }
 
         [Fact]
@@ -147,8 +147,7 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            Assert.False(task.IsCompleted);
+            AssertRunsWithoutStopping(task);
         }
 
         [Fact]
@@ -191,11 +190,13 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            connectionMock.Verify(c => c.Write(It.Is<Status>(
-                x => x.Name == playerName
-                && x.LocationId == Fixture.LocationId()
-                && x.MovementStatus == null)));
+            AssertDelayed(task, () =>
+            {
+                connectionMock.Verify(c => c.Write(It.Is<Status>(
+                    x => x.Name == playerName
+                    && x.LocationId == Fixture.LocationId()
+                    && x.MovementStatus == null)));
+            });
         }
 
         [Fact]
@@ -241,8 +242,7 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            Assert.True(task.IsCompleted);
+            AssertCompletes(task);
         }
 
         [Fact]
@@ -288,8 +288,10 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            connectionMock.Verify(c => c.Write(It.Is<Disconnected>(x => x.Reason == DisconnectReason.None)));
+            AssertDelayed(task, () =>
+            {
+                connectionMock.Verify(c => c.Write(It.Is<Disconnected>(x => x.Reason == DisconnectReason.None)));
+            });
         }
 
         [Fact]
@@ -335,8 +337,7 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            Assert.True(task.IsCompleted);
+            AssertCompletes(task);
         }
 
         [Fact]
@@ -385,16 +386,18 @@ namespace TypeRealm.Server.Tests
 
             CreateServer();
 
-            task.Wait(100);
-            Assert.False(task.IsCompleted);
+            AssertDelayed(task, () =>
+            {
+                _messageDispatcherMock.Verify(d => d.Dispatch(
+                    It.Is<ConnectedClient>(x => x.PlayerId == playerId && x.Connection == connectionMock.Object),
+                    It.IsAny<Say>()));
 
-            _messageDispatcherMock.Verify(d => d.Dispatch(
-                It.Is<ConnectedClient>(x => x.PlayerId == playerId && x.Connection == connectionMock.Object),
-                It.IsAny<Say>()));
+                _messageDispatcherMock.Verify(d => d.Dispatch(
+                    It.Is<ConnectedClient>(x => x.PlayerId == playerId && x.Connection == connectionMock.Object),
+                    It.IsAny<Authorize>()));
+            });
 
-            _messageDispatcherMock.Verify(d => d.Dispatch(
-                It.Is<ConnectedClient>(x => x.PlayerId == playerId && x.Connection == connectionMock.Object),
-                It.IsAny<Authorize>()));
+            AssertRunsWithoutStopping(task);
         }
 
         private Server CreateServer()
@@ -406,6 +409,35 @@ namespace TypeRealm.Server.Tests
                 _messageDispatcherMock.Object,
                 _playerRepositoryMock.Object,
                 _clientListenerFactoryMock.Object);
+        }
+
+        private void AssertDelayed(Task task, Action action)
+        {
+            task.Wait(100);
+
+            try
+            {
+                action();
+            }
+            catch // Assert failed. Try waiting more.
+            {
+                task.Wait(1000);
+                action();
+            }
+        }
+
+        private void AssertCompletes(Task task)
+        {
+            AssertDelayed(task, () =>
+            {
+                Assert.True(task.IsCompleted);
+            });
+        }
+
+        private void AssertRunsWithoutStopping(Task task)
+        {
+            task.Wait(1000);
+            Assert.False(task.IsCompleted);
         }
     }
 }
