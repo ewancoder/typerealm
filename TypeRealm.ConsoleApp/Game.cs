@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.Messages;
 using TypeRealm.Messages.Movement;
@@ -12,35 +11,30 @@ namespace TypeRealm.ConsoleApp
         private readonly object _lock = new object();
         private readonly IPrinter _printer;
         private readonly Queue<string> _notifications = new Queue<string>();
-
-        private IConnection _connection;
+        private IMessageProcessor _messages;
         private Status _status;
 
-        public Game(IConnectionFactory connectionFactory, IPrinter printer)
+        public Game(IConnectionFactory connectionFactory, IPrinter printer, Authorize authorizeMessage)
         {
             _printer = printer;
-            _connection = connectionFactory.Connect();
-            IsConnected = true;
 
-            Task.Run(() => ListenToServer());
+            var dispatcher = new GameMessageDispatcher(this);
+            _messages = new MessageProcessor(connectionFactory, dispatcher, authorizeMessage);
         }
 
-        public bool IsConnected { get; private set; }
+        public bool IsRunning => _messages.IsConnected;
 
         public void Input(ConsoleKeyInfo key)
         {
-            if (!IsConnected)
-                return;
-
             if (key.Key == ConsoleKey.E)
             {
-                _connection.Write(new Quit());
+                _messages.Send(new Quit());
                 return;
             }
 
             if (key.Key == ConsoleKey.R)
             {
-                _connection.Write(new EnterRoad
+                _messages.Send(new EnterRoad
                 {
                     RoadId = 1
                 });
@@ -50,7 +44,7 @@ namespace TypeRealm.ConsoleApp
 
             if (key.Key == ConsoleKey.M)
             {
-                _connection.Write(new Move
+                _messages.Send(new Move
                 {
                     Distance = 1
                 });
@@ -60,7 +54,7 @@ namespace TypeRealm.ConsoleApp
 
             if (key.Key == ConsoleKey.T)
             {
-                _connection.Write(new TurnAround());
+                _messages.Send(new TurnAround());
                 return;
             }
         }
@@ -73,59 +67,21 @@ namespace TypeRealm.ConsoleApp
             }
         }
 
-        public void Dispose()
+        public void Update(Status status)
         {
-            if (_connection != null)
-            {
-                _connection.Dispose();
-                _connection = null;
-            }
+            _status = status;
+            Update();
         }
 
-        private void ListenToServer()
+        // Was private.
+        public void Disconnect(string reason)
         {
-            while (IsConnected)
-            {
-                var message = _connection.Read();
-
-                lock (_lock)
-                {
-                    Dispatch(message);
-                }
-            }
-        }
-
-        private void Dispatch(object message)
-        {
-            if (message is Status status)
-            {
-                _status = status;
-                Update();
-                return;
-            }
-
-            if (message is Disconnected disconnected)
-            {
-                // Stop listening.
-                Disconnect(disconnected.Reason.ToString());
-                return;
-            }
-
-            if (message is Say say)
-            {
-                Notify(say.Message);
-                return;
-            }
-        }
-
-        private void Disconnect(string reason)
-        {
-            IsConnected = false;
-
+            // Don't call _messages.Dispose(), this leads to deadlock cause messages wait for this method to finish.
             _printer.DisconnectedWithReason(reason);
         }
 
-        private void Notify(string message)
+        // Was private.
+        public void Notify(string message)
         {
             _notifications.Enqueue(message);
 
@@ -133,6 +89,15 @@ namespace TypeRealm.ConsoleApp
                 _notifications.Dequeue();
 
             Update();
+        }
+
+        public void Dispose()
+        {
+            if (_messages != null)
+            {
+                _messages.Dispose();
+                _messages = null;
+            }
         }
     }
 }

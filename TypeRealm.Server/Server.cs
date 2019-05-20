@@ -111,15 +111,20 @@ namespace TypeRealm.Server
                 {
                     _connectedClients.Remove(client);
                     _logger.Log($"{client.PlayerId} unexpectedly lost connection.", exception);
-                    UpdateAll();
                 }
+
+                UpdateAll();
             }
         }
 
         private void UpdateAll()
         {
-            // TODO: Check IsCompleted property to know if every update succeeded.
-            Parallel.ForEach(_connectedClients, SendStatus);
+            try
+            {
+                // TODO: Check IsCompleted property to know if every update succeeded.
+                Parallel.ForEach(_connectedClients, SendStatus);
+            }
+            catch { }
         }
 
         private void SendStatus(ConnectedClient client)
