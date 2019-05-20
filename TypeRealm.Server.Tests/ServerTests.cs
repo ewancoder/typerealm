@@ -190,6 +190,8 @@ namespace TypeRealm.Server.Tests
                 .Returns(playerId);
 
             CreateServer();
+
+            task.Wait(100);
             connectionMock.Verify(c => c.Write(It.Is<Status>(
                 x => x.Name == playerName
                 && x.LocationId == Fixture.LocationId()
