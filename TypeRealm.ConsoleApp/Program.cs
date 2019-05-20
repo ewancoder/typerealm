@@ -32,20 +32,18 @@ namespace TypeRealm.ConsoleApp
                 PlayerName = playerName
             };
 
-            var connectionFactory = new ConnectionFactory(
-                new TcpConnectionFactory(server, Port), authorize);
-
+            var connectionFactory = new TcpConnectionFactory(server, Port);
             var dataStore = new InMemoryDataStore();
 
             var output = new ConsoleOutput();
             var printer = new Printer(output, dataStore);
 
-            using (var game = new Game(connectionFactory, printer))
+            using (var game = new Game(connectionFactory, printer, authorize))
             {
                 Console.CursorVisible = false;
                 game.Update();
 
-                while (game.IsConnected)
+                while (game.IsRunning)
                 {
                     var key = Console.ReadKey(true);
                     game.Input(key);
