@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -24,7 +23,6 @@ namespace TypeRealm.Server.Tests
             _playerRepositoryMock = new Mock<IPlayerRepository>();
             _clientListenerFactoryMock = new Mock<IClientListenerFactory>();
 
-            var playerId = PlayerId.New();
             _playerRepositoryMock
                 .Setup(p => p.Find(Fixture.PlayerId()))
                 .Returns(Fixture.Player());
