@@ -38,16 +38,16 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authorize.cs" />
-    <Compile Include="Disconnected.cs" />
-    <Compile Include="HeartBeat.cs" />
+    <Compile Include="Connection\Authorize.cs" />
+    <Compile Include="Connection\Disconnected.cs" />
+    <Compile Include="Connection\HeartBeat.cs" />
     <Compile Include="Movement\MovementDirection.cs" />
     <Compile Include="Movement\MovementStatus.cs" />
     <Compile Include="Movement\EnterRoad.cs" />
     <Compile Include="IndexedCollection[TValue].cs" />
     <Compile Include="MessageSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Quit.cs" />
+    <Compile Include="Connection\Quit.cs" />
     <Compile Include="Say.cs" />
     <Compile Include="Movement\TurnAround.cs" />
     <Compile Include="Movement\Move.cs" />

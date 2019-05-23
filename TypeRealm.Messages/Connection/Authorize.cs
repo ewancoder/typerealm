@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace TypeRealm.Messages
+namespace TypeRealm.Messages.Connection
 {
     [ProtoContract]
     public sealed class Authorize

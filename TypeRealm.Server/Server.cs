@@ -4,6 +4,7 @@ using System.Linq;
 using System.Timers;
 using TypeRealm.Domain;
 using TypeRealm.Messages;
+using TypeRealm.Messages.Connection;
 using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.Server

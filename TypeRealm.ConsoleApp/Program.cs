@@ -1,7 +1,7 @@
 ﻿using System;
 using TypeRealm.ConsoleApp.Data;
 using TypeRealm.ConsoleApp.Networking;
-using TypeRealm.Messages;
+using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp
 {

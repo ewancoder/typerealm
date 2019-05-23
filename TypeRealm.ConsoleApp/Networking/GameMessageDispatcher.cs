@@ -1,5 +1,6 @@
 ﻿using System;
 using TypeRealm.Messages;
+using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp.Networking
 {

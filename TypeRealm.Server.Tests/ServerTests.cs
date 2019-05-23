@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Moq;
 using TypeRealm.Domain;
 using TypeRealm.Messages;
+using TypeRealm.Messages.Connection;
 using Xunit;
 
 namespace TypeRealm.Server.Tests

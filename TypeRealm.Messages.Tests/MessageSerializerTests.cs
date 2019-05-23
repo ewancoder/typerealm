@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using ProtoBuf;
+using TypeRealm.Messages.Connection;
 using Xunit;
 
 namespace TypeRealm.Messages.Tests

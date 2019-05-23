@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Timers;
 using TypeRealm.Messages;
+using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp.Networking
 {

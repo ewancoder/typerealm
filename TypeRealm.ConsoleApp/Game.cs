@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.Messages;
+using TypeRealm.Messages.Connection;
 using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.ConsoleApp
