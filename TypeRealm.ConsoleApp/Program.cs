@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Net.Sockets;
-using System.Threading.Tasks;
+using TypeRealm.ConsoleApp.Data;
+using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.Messages;
 
 namespace TypeRealm.ConsoleApp
@@ -25,57 +25,33 @@ namespace TypeRealm.ConsoleApp
             Console.Write("Player name: ");
             var playerName = Console.ReadLine();
 
-            using (var client = new TcpClient())
+            var authorize = new Authorize
             {
-                client.Connect(server, Port);
+                Login = login,
+                Password = password,
+                PlayerName = playerName
+            };
 
-                var stream = client.GetStream();
-                var isConnected = true;
+            var connectionFactory = new TcpConnectionFactory(server, Port);
+            var dataStore = new InMemoryDataStore();
 
-                Task.Run(() =>
+            var output = new ConsoleOutput();
+            var printer = new Printer(output, dataStore);
+
+            using (var game = new Game(connectionFactory, printer, authorize))
+            {
+                Console.CursorVisible = false;
+                game.Update();
+
+                while (true)
                 {
-                    while (true)
-                    {
-                        // TODO: Add try/catch.
-                        var message = MessageSerializer.Read(stream);
+                    var key = Console.ReadKey(true);
 
-                        if (message is Disconnected disconnected)
-                        {
-                            Console.WriteLine($"SERVER: You have been disconnected. Reason: {disconnected.Reason.ToString()}");
-                            Console.WriteLine("Stopped waiting for messages from server.");
-                            isConnected = false;
-                            return;
-                        }
+                    if (!game.IsRunning)
+                        return;
 
-                        if (message is Say say)
-                        {
-                            Console.WriteLine($"SERVER: {say.Message}");
-                        }
-                    }
-                });
-
-                while (isConnected)
-                {
-                    MessageSerializer.Write(stream, new Authorize
-                    {
-                        Login = login,
-                        Password = password,
-                        PlayerName = playerName
-                    });
-
-                    Console.WriteLine("Sent Authorize message.");
-
-                    var command = Console.ReadLine();
-
-                    if (command == "exit")
-                    {
-                        MessageSerializer.Write(stream, new Quit());
-                        Console.WriteLine("Sent quit message.");
-                    }
+                    game.Input(key);
                 }
-
-                Console.WriteLine("Stopped sending messages loop. Press ENTER to exit.");
-                Console.ReadLine();
             }
         }
     }

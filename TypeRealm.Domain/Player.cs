@@ -36,6 +36,12 @@ namespace TypeRealm.Domain
             return player;
         }
 
+        public bool IsAtSamePlaceAs(Player player)
+        {
+            return LocationId == player.LocationId
+                && MovementInformation?.Road.RoadId == player.MovementInformation?.Road.RoadId;
+        }
+
         public void EnterRoad(Road road)
         {
             if (MovementInformation != null)

@@ -16,7 +16,8 @@ namespace TypeRealm.Domain
         public RoadDirection Direction { get; }
 
         public LocationId ArrivalLocationId => Road.GetArrivalLocationId(Direction);
-        public bool HasArrived => Progress == Road.GetDistanceFor(Direction);
+        public Distance Distance => Road.GetDistanceFor(Direction);
+        public bool HasArrived => Progress == Distance;
 
         public MovementInformation Move(Distance progress)
         {

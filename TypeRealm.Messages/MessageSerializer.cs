@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using ProtoBuf;
+using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.Messages
 {
@@ -10,7 +11,12 @@ namespace TypeRealm.Messages
         {
             typeof(Authorize),
             typeof(Disconnected),
+            typeof(EnterRoad),
+            typeof(HeartBeat),
             typeof(Say),
+            typeof(Status),
+            typeof(Move),
+            typeof(TurnAround),
             typeof(Quit)
         });
 
