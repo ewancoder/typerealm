@@ -19,9 +19,10 @@ namespace TypeRealm.Server
             var messageDispatcher = new MessageDispatcher(
                 new EchoMessageDispatcher(), playerRepository, roadStore);
             var authorizationService = new AuthorizationService(logger, accountRepository, playerRepository, locationStore);
+            var statusFactory = new StatusFactory(playerRepository);
             var clientListenerFactory = new TcpClientListenerFactory(logger);
 
-            using (var server = new Server(Port, logger, authorizationService, messageDispatcher, playerRepository, clientListenerFactory))
+            using (var server = new Server(Port, TimeSpan.FromSeconds(1), logger, authorizationService, messageDispatcher, statusFactory, clientListenerFactory))
             {
                 Console.ReadLine();
             }
