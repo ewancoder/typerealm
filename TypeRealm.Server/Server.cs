@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 using TypeRealm.Domain;
 using TypeRealm.Messages;
@@ -9,17 +8,19 @@ using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.Server
 {
+    // TODO: Update only clients that need update.
+    // TODO: Handle situation when message couldn't be sent to client.
     internal sealed class Server : IDisposable
     {
+        private readonly object _lock = new object();
         private readonly ILogger _logger;
-        private readonly List<ConnectedClient> _connectedClients;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMessageDispatcher _messageDispatcher;
         private readonly IPlayerRepository _playerRepository;
-        private readonly Timer _heartbeat;
-        private readonly object _lock;
+        private readonly List<ConnectedClient> _connectedClients;
 
         private IDisposable _listener;
+        private Timer _heartbeat;
 
         public Server(
             int port,
@@ -30,23 +31,25 @@ namespace TypeRealm.Server
             IClientListenerFactory clientListenerFactory)
         {
             _logger = logger;
-            _connectedClients = new List<ConnectedClient>();
             _authorizationService = authorizationService;
             _messageDispatcher = messageDispatcher;
             _playerRepository = playerRepository;
-            _lock = new object();
-
-            _listener = clientListenerFactory.StartListening(port, HandleConnection);
+            _connectedClients = new List<ConnectedClient>();
 
             _heartbeat = new Timer(1000);
             _heartbeat.Elapsed += (object sender, ElapsedEventArgs e) =>
             {
-                Parallel.ForEach(_connectedClients, client =>
+                lock (_lock)
                 {
-                    client.Connection.Write(new HeartBeat());
-                });
+                    foreach (var client in _connectedClients)
+                    {
+                        client.Connection.TryWrite(new HeartBeat());
+                    }
+                }
             };
             _heartbeat.Start();
+
+            _listener = clientListenerFactory.StartListening(port, HandleConnection);
         }
 
         public void Dispose()
@@ -55,6 +58,12 @@ namespace TypeRealm.Server
             {
                 _listener.Dispose();
                 _listener = null;
+            }
+
+            if (_heartbeat != null)
+            {
+                _heartbeat.Dispose();
+                _heartbeat = null;
             }
         }
 
@@ -90,7 +99,6 @@ namespace TypeRealm.Server
 
             try
             {
-                // TODO: Update only clients that need update and maybe use global queue for this.
                 UpdateAll();
 
                 while (true)
@@ -113,7 +121,6 @@ namespace TypeRealm.Server
                         _messageDispatcher.Dispatch(client, message);
                     }
 
-                    // TODO: Update only clients that need update and maybe use global queue for this.
                     UpdateAll();
                 }
             }
@@ -131,15 +138,20 @@ namespace TypeRealm.Server
 
         private void UpdateAll()
         {
-            try
+            lock (_lock)
             {
-                // TODO: Check IsCompleted property to know if every update succeeded.
-                Parallel.ForEach(_connectedClients, SendStatus);
+                foreach(var client in _connectedClients)
+                {
+                    if (!TrySendStatus(client))
+                    {
+                        _logger.Log($"Failed to send update status to {client.PlayerId} player.");
+                    }
+                }
             }
-            catch { }
         }
 
-        private void SendStatus(ConnectedClient client)
+        // The user of this method (as well as MakeStatus) should lock this operation.
+        private bool TrySendStatus(ConnectedClient client)
         {
             var player = _playerRepository.Find(client.PlayerId);
 
@@ -148,7 +160,7 @@ namespace TypeRealm.Server
 
             var status = MakeStatus(player);
 
-            client.Connection.Write(status);
+            return client.Connection.TryWrite(status);
         }
 
         private Status MakeStatus(Player player)
