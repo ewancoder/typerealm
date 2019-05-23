@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using TypeRealm.Domain;
 using TypeRealm.Messages;
 using TypeRealm.Messages.Movement;
@@ -15,6 +16,7 @@ namespace TypeRealm.Server
         private readonly IAuthorizationService _authorizationService;
         private readonly IMessageDispatcher _messageDispatcher;
         private readonly IPlayerRepository _playerRepository;
+        private readonly Timer _heartbeat;
         private readonly object _lock;
 
         private IDisposable _listener;
@@ -35,6 +37,16 @@ namespace TypeRealm.Server
             _lock = new object();
 
             _listener = clientListenerFactory.StartListening(port, HandleConnection);
+
+            _heartbeat = new Timer(1000);
+            _heartbeat.Elapsed += (object sender, ElapsedEventArgs e) =>
+            {
+                Parallel.ForEach(_connectedClients, client =>
+                {
+                    client.Connection.Write(new HeartBeat());
+                });
+            };
+            _heartbeat.Start();
         }
 
         public void Dispose()
@@ -111,15 +123,20 @@ namespace TypeRealm.Server
                 {
                     _connectedClients.Remove(client);
                     _logger.Log($"{client.PlayerId} unexpectedly lost connection.", exception);
-                    UpdateAll();
                 }
+
+                UpdateAll();
             }
         }
 
         private void UpdateAll()
         {
-            // TODO: Check IsCompleted property to know if every update succeeded.
-            Parallel.ForEach(_connectedClients, SendStatus);
+            try
+            {
+                // TODO: Check IsCompleted property to know if every update succeeded.
+                Parallel.ForEach(_connectedClients, SendStatus);
+            }
+            catch { }
         }
 
         private void SendStatus(ConnectedClient client)

@@ -12,6 +12,7 @@ namespace TypeRealm.Messages
             typeof(Authorize),
             typeof(Disconnected),
             typeof(EnterRoad),
+            typeof(HeartBeat),
             typeof(Say),
             typeof(Status),
             typeof(Move),
