@@ -1,24 +1,13 @@
 ﻿using System;
 using System.IO;
 using ProtoBuf;
-using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.Messages
 {
     public static class MessageSerializer
     {
-        private static readonly IndexedCollection<Type> _messages = new IndexedCollection<Type>(new[]
-        {
-            typeof(Authorize),
-            typeof(Disconnected),
-            typeof(EnterRoad),
-            typeof(HeartBeat),
-            typeof(Say),
-            typeof(Status),
-            typeof(Move),
-            typeof(TurnAround),
-            typeof(Quit)
-        });
+        private static readonly IndexedCollection<Type> _messages
+            = new IndexedCollection<Type>(TypeLoader.Messages);
 
         public static object Read(Stream stream)
         {

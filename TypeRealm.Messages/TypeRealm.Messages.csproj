@@ -52,6 +52,7 @@
     <Compile Include="Movement\TurnAround.cs" />
     <Compile Include="Movement\Move.cs" />
     <Compile Include="Status.cs" />
+    <Compile Include="TypeLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

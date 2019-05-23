@@ -50,6 +50,7 @@ namespace TypeRealm.ConsoleApp.Networking
             if (!IsConnected)
                 throw new InvalidOperationException("Not connected.");
 
+            // TODO: If this throws (server is down) - try reconnecting and sending again (maybe put messages to queue, buffer them).
             _connection.Write(message);
         }
 
