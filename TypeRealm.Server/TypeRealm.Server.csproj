@@ -51,6 +51,7 @@
     <Compile Include="InMemoryAccountRepository.cs" />
     <Compile Include="InMemoryLocationStore.cs" />
     <Compile Include="InMemoryPlayerRepository.cs" />
+    <Compile Include="InMemoryRoadStore.cs" />
     <Compile Include="MessageDispatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
