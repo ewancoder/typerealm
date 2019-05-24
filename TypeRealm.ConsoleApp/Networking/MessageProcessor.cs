@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Timers;
+using TypeRealm.ConsoleApp.Messages;
 using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp.Networking
@@ -145,6 +146,7 @@ namespace TypeRealm.ConsoleApp.Networking
                     return;
 
                 _isReconnecting = true;
+                _dispatcher.Dispatch(new Reconnecting());
             }
 
             _heartbeat.Stop();

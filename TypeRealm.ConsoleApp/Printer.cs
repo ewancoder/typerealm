@@ -36,6 +36,12 @@ namespace TypeRealm.ConsoleApp
             _output.WriteLine($"Disconnected with reason: {reason}.");
         }
 
+        public void Reconnecting()
+        {
+            _output.Clear();
+            _output.WriteLine($"Lost connection, trying to reconnect...");
+        }
+
         private void PrintNotifications(IEnumerable<string> notifications)
         {
             _output.WriteLine("Notifications:");

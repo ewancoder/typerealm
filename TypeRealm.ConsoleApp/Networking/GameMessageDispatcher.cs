@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeRealm.ConsoleApp.Messages;
 using TypeRealm.Messages;
 using TypeRealm.Messages.Connection;
 
@@ -31,6 +32,12 @@ namespace TypeRealm.ConsoleApp.Networking
             if (message is Say say)
             {
                 _game.Notify(say.Message);
+                return;
+            }
+
+            if (message is Reconnecting reconnecting)
+            {
+                _game.Reconnecting();
                 return;
             }
 

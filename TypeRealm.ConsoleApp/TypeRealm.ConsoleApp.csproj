@@ -42,6 +42,7 @@
     <Compile Include="Data\InMemoryDataStore.cs" />
     <Compile Include="Data\Location.cs" />
     <Compile Include="Data\Road.cs" />
+    <Compile Include="Messages\Reconnecting.cs" />
     <Compile Include="Networking\GameMessageDispatcher.cs" />
     <Compile Include="Networking\IMessageDispatcher.cs" />
     <Compile Include="Networking\IMessageProcessor.cs" />

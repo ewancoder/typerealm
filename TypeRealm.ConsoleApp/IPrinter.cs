@@ -7,5 +7,6 @@ namespace TypeRealm.ConsoleApp
     {
         void Print(Status status, IEnumerable<string> notifications);
         void DisconnectedWithReason(string reason);
+        void Reconnecting();
     }
 }

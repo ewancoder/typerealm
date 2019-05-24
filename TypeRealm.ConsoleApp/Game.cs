@@ -81,6 +81,11 @@ namespace TypeRealm.ConsoleApp
             _printer.DisconnectedWithReason(reason);
         }
 
+        public void Reconnecting()
+        {
+            _printer.Reconnecting();
+        }
+
         // Was private.
         public void Notify(string message)
         {
