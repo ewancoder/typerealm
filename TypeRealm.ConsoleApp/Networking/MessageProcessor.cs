@@ -75,12 +75,41 @@ namespace TypeRealm.ConsoleApp.Networking
             _heartbeat.Dispose();
         }
 
-        // If connection is unsuccessful - this method throws.
+        // If connection is unsuccessful - IsConnected will remain false.
         private void Connect()
         {
-            // Connect and authorize.
-            _connection = _connectionFactory.Connect();
-            _connection.Write(_authorizeMessage);
+            object message = null;
+
+            try
+            {
+                // Connect and authorize.
+                _connection = _connectionFactory.Connect();
+                _connection.Write(_authorizeMessage);
+
+                // Wait for connection acknowledgement. Server should send status.
+                message = _connection.Read();
+            }
+            catch
+            {
+                // We get there if server threw an error.
+                lock (_lock)
+                {
+                    _dispatcher.Dispatch(new Disconnected
+                    {
+                        Reason = DisconnectReason.CouldNotConnect
+                    });
+                }
+
+                return;
+            }
+
+            lock (_lock)
+            {
+                _dispatcher.Dispatch(message);
+            }
+
+            if (message is Disconnected)
+                return;
 
             // Tell all processes that they can work.
             IsConnected = true;

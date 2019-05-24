@@ -5,7 +5,8 @@ namespace TypeRealm.Messages.Connection
     public enum DisconnectReason
     {
         None = 0,
-        InvalidCredentials = 1
+        InvalidCredentials = 1,
+        CouldNotConnect = 2
     }
 
     [ProtoContract]

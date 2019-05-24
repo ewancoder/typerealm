@@ -38,11 +38,18 @@ namespace TypeRealm.ConsoleApp
             var output = new ConsoleOutput();
             var printer = new Printer(output, dataStore);
 
+            // Game constructor synchronously connects to the server.
             using (var game = new Game(connectionFactory, printer, authorize))
             {
-                Console.CursorVisible = false;
-                game.Update();
+                // If connection was unsuccessful - exit.
+                if (!game.IsRunning)
+                {
+                    Console.WriteLine("Game over.");
+                    Console.ReadLine();
+                    return;
+                }
 
+                Console.CursorVisible = false;
                 while (true)
                 {
                     var key = Console.ReadKey(true);
