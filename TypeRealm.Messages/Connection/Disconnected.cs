@@ -6,7 +6,8 @@ namespace TypeRealm.Messages.Connection
     {
         None = 0,
         InvalidCredentials = 1,
-        CouldNotConnect = 2
+        CouldNotConnect = 2,
+        LostConnection = 3
     }
 
     [ProtoContract]

@@ -55,7 +55,11 @@ namespace TypeRealm.ConsoleApp
                     var key = Console.ReadKey(true);
 
                     if (!game.IsRunning)
+                    {
+                        Console.WriteLine("Game over.");
+                        Console.ReadLine();
                         return;
+                    }
 
                     game.Input(key);
                 }

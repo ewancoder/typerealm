@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Timers;
-using TypeRealm.Messages;
 using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp.Networking
 {
-    // TODO: Double check for deadlocks and locking threads.
-
     /// <summary>
     /// This should be the only class that calls _connection.Read().
     /// </summary>
@@ -17,17 +14,22 @@ namespace TypeRealm.ConsoleApp.Networking
         private readonly IConnectionFactory _connectionFactory;
         private readonly IMessageDispatcher _dispatcher;
         private readonly Authorize _authorizeMessage;
-        private readonly Timer _heartbeat = new Timer(5000);
+        private readonly Timer _heartbeat;
+        private readonly Reconnect _reconnect;
         private IConnection _connection;
         private Task _listening;
         private Task _reconnecting;
+        private bool _isReconnecting;
 
         // If connection is unsuccessful - constructor throws (from Connect method).
-        public MessageProcessor(IConnectionFactory connectionFactory, IMessageDispatcher messageDispatcher, Authorize authorizeMessage)
+        public MessageProcessor(IConnectionFactory connectionFactory, IMessageDispatcher messageDispatcher, Authorize authorizeMessage, Reconnect reconnect)
         {
             _connectionFactory = connectionFactory;
             _dispatcher = messageDispatcher;
             _authorizeMessage = authorizeMessage;
+            _reconnect = reconnect;
+
+            _heartbeat = new Timer(reconnect.HeartbeatReconnectTimeout.TotalMilliseconds);
 
             // When client did not hear from server - reconnect.
             _heartbeat.Elapsed += (object sender, ElapsedEventArgs e) =>
@@ -41,18 +43,30 @@ namespace TypeRealm.ConsoleApp.Networking
         public bool IsConnected { get; private set; }
 
         /// <summary>
-        /// Throws if not connected or sending message has failed.
+        /// Tries to reconnect if sending message has failed.
+        /// Doesn't do anything if trying to reconnect right now.
         /// </summary>
         public void Send(object message)
         {
-            if (_reconnecting != null)
-                _reconnecting.TryWait();
+            lock (_lock)
+            {
+                if (_isReconnecting)
+                    return;
 
-            if (!IsConnected)
-                throw new InvalidOperationException("Not connected.");
+                if (!IsConnected)
+                    throw new InvalidOperationException("Not connected.");
+            }
 
-            // TODO: If this throws (server is down) - try reconnecting and sending again (maybe put messages to queue, buffer them).
-            _connection.Write(message);
+            // TODO: Maybe put messages to queue, buffer them.
+            // TODO: If we send multiple commands, they are "buffered" by .NET locking and then after reconnection are sent to server which leads to invalid state.
+            try
+            {
+                _connection.Write(message);
+            }
+            catch
+            {
+                Reconnect();
+            }
         }
 
         public void Dispose()
@@ -121,41 +135,71 @@ namespace TypeRealm.ConsoleApp.Networking
 
         private void Reconnect()
         {
-            // If message processor was disposed - don't try to reconnect (don't block the thread).
-            if (!IsConnected)
-                return;
+            lock (_lock)
+            {
+                // If message processor was disposed - don't try to reconnect (don't block the thread).
+                if (!IsConnected)
+                    return;
+
+                if (_isReconnecting)
+                    return;
+
+                _isReconnecting = true;
+            }
 
             _heartbeat.Stop();
             _reconnecting?.TryWait(); // In case there's another reconnection in process - wait for it to finish.
-            _reconnecting = Task.Run(() =>
+
+            for (var i = 1; i <= _reconnect.Tries; i++)
             {
-                _connection?.Dispose();
-                _listening.TryWait(); // After connection has been disposed - should throw.
+                _reconnecting = Task.Run(() =>
+                {
+                    _connection?.Dispose();
+                    _listening.TryWait(); // After connection has been disposed - should throw.
 
-                // Connect and authorize.
-                _connection = _connectionFactory.Connect();
-                _connection.Write(_authorizeMessage);
-            });
+                    // Connect and authorize.
+                    _connection = _connectionFactory.Connect();
+                    _connection.Write(_authorizeMessage);
+                });
 
-            var success = _reconnecting.TryWait();
+                var success = _reconnecting.TryWait();
 
-            // If reconnection did not succeed - stop message processor.
-            if (!success)
-            {
-                Dispose();
+                if (!success)
+                {
+                    System.Threading.Thread.Sleep(_reconnect.RetryWaitTime);
+                    continue;
+                }
+
+                // Tell all processes that they can continue working.
+                lock (_lock)
+                {
+                    _reconnecting = null;
+                    _isReconnecting = false;
+                }
+
+                _listening = Task.Run(StartListening);
+                _heartbeat.Start();
+
                 return;
             }
 
-            _reconnecting = null; // Tell all processes that they can continue working.
-            _listening = Task.Run(StartListening);
-            _heartbeat.Start();
+            // If reconnection did not succeed - stop message processor.
+            Dispose();
+
+            lock (_lock)
+            {
+                _dispatcher.Dispatch(new Disconnected
+                {
+                    Reason = DisconnectReason.LostConnection
+                });
+            }
         }
 
         private void StartListening()
         {
             try
             {
-                while (IsConnected && _reconnecting == null)
+                while (IsConnected && !_isReconnecting)
                 {
                     var message = _connection.Read();
 
@@ -181,8 +225,11 @@ namespace TypeRealm.ConsoleApp.Networking
                 // connection and read operation fails. We don't want to throw.
                 // We want to end this method to allow reconnection process to
                 // succeed (it waits for listening process to finish).
-                if (_reconnecting != null)
-                    return;
+                lock (_lock)
+                {
+                    if (_isReconnecting)
+                        return;
+                }
 
                 // Free this method because Reconnect() will wait for it to finish.
                 // If reconnection will fail - connection will be disposed.

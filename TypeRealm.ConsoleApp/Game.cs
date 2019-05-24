@@ -20,7 +20,7 @@ namespace TypeRealm.ConsoleApp
             _printer = printer;
 
             var dispatcher = new GameMessageDispatcher(this);
-            _messages = new MessageProcessor(connectionFactory, dispatcher, authorizeMessage);
+            _messages = new MessageProcessor(connectionFactory, dispatcher, authorizeMessage, Reconnect.Default());
         }
 
         public bool IsRunning => _messages.IsConnected;

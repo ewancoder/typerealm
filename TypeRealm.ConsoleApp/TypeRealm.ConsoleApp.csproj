@@ -52,6 +52,7 @@
     <Compile Include="Networking\IConnectionFactory.cs" />
     <Compile Include="Networking\IConnection.cs" />
     <Compile Include="ConsoleOutput.cs" />
+    <Compile Include="Networking\Reconnect.cs" />
     <Compile Include="Networking\TaskExtentions.cs" />
     <Compile Include="Printer.cs" />
     <Compile Include="Program.cs" />

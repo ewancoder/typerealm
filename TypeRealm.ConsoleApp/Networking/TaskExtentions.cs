@@ -22,7 +22,7 @@ namespace TypeRealm.ConsoleApp.Networking
                 // Swallow exception.
             }
 
-            return task.IsCompleted;
+            return task.IsCompleted && !task.IsFaulted;
         }
     }
 }
