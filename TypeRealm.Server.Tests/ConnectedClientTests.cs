@@ -1,4 +1,5 @@
 ﻿using Moq;
+using TypeRealm.Server.Networking;
 using Xunit;
 
 namespace TypeRealm.Server.Tests

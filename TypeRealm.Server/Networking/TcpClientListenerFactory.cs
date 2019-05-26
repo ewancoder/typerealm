@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TypeRealm.Server
+namespace TypeRealm.Server.Networking
 {
     internal sealed class TcpClientListenerFactory : IClientListenerFactory
     {

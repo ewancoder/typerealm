@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
-namespace TypeRealm.Server
+namespace TypeRealm.Server.Networking
 {
     internal sealed class TcpClientListener : IDisposable
     {
