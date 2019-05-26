@@ -8,6 +8,7 @@ using Moq;
 using TypeRealm.Domain;
 using TypeRealm.Messages;
 using TypeRealm.Messages.Connection;
+using TypeRealm.Server.Messaging;
 using TypeRealm.Server.Networking;
 using Xunit;
 

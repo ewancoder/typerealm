@@ -1,5 +1,6 @@
 ﻿using System;
 using TypeRealm.Messages;
+using TypeRealm.Server.Messaging;
 
 namespace TypeRealm.Server.Infrastructure
 {
