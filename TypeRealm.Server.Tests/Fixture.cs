@@ -20,10 +20,28 @@ namespace TypeRealm.Server.Tests
             return new PlayerId(new Guid("11111111-1111-1111-1111-111111111111"));
         }
 
-        public static Player Player()
+        // Prefix to all string values.
+        public static Player Player(PlayerId playerId, PlayerName playerName, LocationId locationId)
         {
             return new Account(AccountId.New(), "login", "password")
-                .CreatePlayer(PlayerId(), PlayerName(), LocationId());
+                .CreatePlayer(playerId, playerName, locationId);
+        }
+
+        public static Player Player(PlayerId playerId, RoadId roadId, Distance distance, Distance progress)
+        {
+            var locationId = LocationId();
+
+            var road = new Road(
+                roadId,
+                new RoadPoint(locationId, distance),
+                new RoadPoint(new LocationId(25), distance));
+
+            var movementInformation = MovementInformation
+                .EnterRoadFrom(road, locationId)
+                .Move(progress);
+
+            return Domain.Player.InState(
+                playerId, AccountId.New(), PlayerName(), locationId, movementInformation);
         }
     }
 }

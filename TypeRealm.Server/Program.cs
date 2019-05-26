@@ -1,5 +1,6 @@
 ﻿using System;
 using TypeRealm.Domain;
+using TypeRealm.Server.Infrastructure;
 
 namespace TypeRealm.Server
 {

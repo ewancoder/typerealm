@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TypeRealm.Server
+namespace TypeRealm.Server.Infrastructure
 {
     internal sealed class ConsoleLogger : ILogger
     {

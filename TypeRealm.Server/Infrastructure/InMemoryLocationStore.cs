@@ -1,6 +1,6 @@
 ﻿using TypeRealm.Domain;
 
-namespace TypeRealm.Server
+namespace TypeRealm.Server.Infrastructure
 {
     internal sealed class InMemoryLocationStore : ILocationStore
     {
