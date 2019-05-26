@@ -369,6 +369,29 @@ namespace TypeRealm.Server.Tests
         }
 
         [Fact]
+        public void ShouldNotFailWhenHeartbeatFails()
+        {
+            _sut.Dispose();
+            _sut = new Server(
+                10,
+                TimeSpan.FromMilliseconds(100), // Disable heartbeat for tests.
+                _loggerMock.Object,
+                _authorizationServiceMock.Object,
+                _messageDispatcherMock.Object,
+                _statusFactoryMock.Object,
+                _clientListenerFactoryMock.Object);
+
+            _connection1.Mock
+                .Setup(x => x.Write(It.IsAny<HeartBeat>()))
+                .Throws<InvalidOperationException>();
+
+            ConnectPlayer(_connection1, PlayerId.New());
+            Thread.Sleep(200);
+
+            _connection1.StillListens();
+        }
+
+        [Fact]
         public void ShouldHeartbeatEverySecondToEveryone()
         {
             _sut.Dispose();
