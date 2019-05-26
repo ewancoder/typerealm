@@ -43,7 +43,14 @@ namespace TypeRealm.Server
                 {
                     foreach (var client in _connectedClients)
                     {
-                        client.Connection.TryWrite(new HeartBeat());
+                        try
+                        {
+                            client.Connection.Write(new HeartBeat());
+                        }
+                        catch
+                        {
+                            // Swallow exception. It's not critical if client doesn't get heartbeat.
+                        }
                     }
                 }
             };

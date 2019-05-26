@@ -4,7 +4,7 @@ using Xunit;
 
 namespace TypeRealm.Server.Tests
 {
-    public class AuthorizationServiceTests
+    public sealed class AuthorizationServiceTests
     {
         private readonly Mock<IAccountRepository> _accountRepositoryMock;
         private readonly Mock<IPlayerRepository> _playerRepositoryMock;

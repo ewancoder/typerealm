@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="AuthorizationService.cs" />
     <Compile Include="ConnectedClient.cs" />
-    <Compile Include="ConnectionExtensions.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="EchoMessageDispatcher.cs" />
     <Compile Include="IAuthorizationService.cs" />
