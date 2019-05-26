@@ -82,8 +82,45 @@ namespace TypeRealm.Server.Tests
             Assert.Equal(playerId, authorizedPlayerId);
         }
 
+
         [Fact]
-        public void ShouldNotAuthorizePlayerFromAnotherAccount()
+        public void ShouldCreatePlayerAndRegisterAccountForNewcomers()
+        {
+            var accountId = AccountId.New();
+            var playerId = PlayerId.New();
+
+            _accountRepositoryMock
+                .Setup(x => x.NextId())
+                .Returns(accountId);
+
+            _playerRepositoryMock
+                .Setup(x => x.NextId())
+                .Returns(playerId);
+
+            var locationId = Fixture.LocationId();
+            _locationStoreMock
+                .Setup(x => x.GetStartingLocationId())
+                .Returns(locationId);
+
+            var playerName = Fixture.PlayerName();
+            var authorizedPlayerId = _sut.AuthorizeOrCreate("login", "password", playerName);
+
+            _accountRepositoryMock.Verify(x => x.Save(It.Is<Account>(
+                a => a.Login == "login"
+                && a.Password == "password"
+                && a.AccountId == accountId)));
+
+            _playerRepositoryMock.Verify(x => x.Save(It.Is<Player>(
+                p => p.PlayerId == playerId
+                && p.AccountId == accountId
+                && p.Name == playerName
+                && p.LocationId == locationId)));
+
+            Assert.Equal(playerId, authorizedPlayerId);
+        }
+
+        [Fact]
+        public void ShouldNotAuthorizePlayerThatAlreadyExistsOnAnotherAccount()
         {
             var accountId = AccountId.New();
             var playerId = PlayerId.New();
