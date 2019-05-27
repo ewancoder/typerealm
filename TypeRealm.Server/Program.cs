@@ -31,8 +31,9 @@ namespace TypeRealm.Server
                 [typeof(TurnAround)] = movementHandler
             };
 
+            var handlerFactory = new InMemoryMessageHandlerFactory(handlers);
             var messageDispatcher = new MessageDispatcher(
-                new EchoMessageDispatcher(), handlers);
+                new EchoMessageDispatcher(), handlerFactory);
             var authorizationService = new AuthorizationService(logger, accountRepository, playerRepository, locationStore);
             var statusFactory = new StatusFactory(playerRepository);
             var clientListenerFactory = new TcpClientListenerFactory(logger);

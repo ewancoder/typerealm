@@ -48,6 +48,8 @@
     <Compile Include="IAuthorizationService.cs" />
     <Compile Include="Messaging\IMessageHandler.cs" />
     <Compile Include="Handlers\MovementHandler.cs" />
+    <Compile Include="Messaging\IMessageHandlerFactory.cs" />
+    <Compile Include="Infrastructure\InMemoryMessageHandlerFactory.cs" />
     <Compile Include="Networking\IClientListenerFactory.cs" />
     <Compile Include="Networking\IConnection.cs" />
     <Compile Include="ILogger.cs" />

@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace TypeRealm.Server.Messaging
 {
     internal sealed class MessageDispatcher : IMessageDispatcher
     {
         private readonly IMessageDispatcher _echo;
-        private readonly Dictionary<Type, IMessageHandler> _handlers;
+        private readonly IMessageHandlerFactory _handlerFactory;
 
         public MessageDispatcher(
             IMessageDispatcher echo,
-            Dictionary<Type, IMessageHandler> handlers)
+            IMessageHandlerFactory handlerFactory)
         {
             _echo = echo;
-            _handlers = handlers; // TODO: Make immutable / encapsulate to handler-factory.
+            _handlerFactory = handlerFactory;
         }
 
         public void Dispatch(ConnectedClient client, object message)
@@ -21,10 +20,9 @@ namespace TypeRealm.Server.Messaging
             _echo.Dispatch(client, message);
             var type = message.GetType();
 
-            if (!_handlers.ContainsKey(type))
+            var handler = _handlerFactory.Resolve(type);
+            if (handler == null)
                 throw new InvalidOperationException("Message handler is not registered.");
-
-            var handler = _handlers[type];
 
             handler.Handle(client, message);
         }
