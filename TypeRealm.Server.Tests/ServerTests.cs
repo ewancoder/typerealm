@@ -149,10 +149,10 @@ namespace TypeRealm.Server.Tests
         }
     }
 
+    public class TestMessage { }
+
     public sealed class ServerTests
     {
-        private class TestMessage { }
-
         private static class Statuses
         {
             public static PlayerId Player1 { get; } = new PlayerId(new Guid("11111111-1111-1111-1111-111111111111"));
