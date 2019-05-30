@@ -3,7 +3,7 @@
 namespace TypeRealm.Messages.Connection
 {
     [ProtoContract]
-    public sealed class HeartBeat
+    public sealed class Heartbeat
     {
     }
 }

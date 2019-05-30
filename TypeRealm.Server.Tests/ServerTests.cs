@@ -384,7 +384,7 @@ namespace TypeRealm.Server.Tests
                 _clientListenerFactoryMock.Object);
 
             _connection1.Mock
-                .Setup(x => x.Write(It.IsAny<HeartBeat>()))
+                .Setup(x => x.Write(It.IsAny<Heartbeat>()))
                 .Throws<InvalidOperationException>();
 
             ConnectPlayer(_connection1, PlayerId.New());
@@ -408,20 +408,20 @@ namespace TypeRealm.Server.Tests
 
             ConnectTwoPlayers();
 
-            _connection1.WaitFor<HeartBeat>();
-            _connection2.WaitFor<HeartBeat>();
+            _connection1.WaitFor<Heartbeat>();
+            _connection2.WaitFor<Heartbeat>();
 
-            var count1 = _connection1.Writes.OfType<HeartBeat>().Count();
-            var count2 = _connection2.Writes.OfType<HeartBeat>().Count();
+            var count1 = _connection1.Writes.OfType<Heartbeat>().Count();
+            var count2 = _connection2.Writes.OfType<Heartbeat>().Count();
 
             Thread.Sleep(150);
 
-            Assert.Equal(1, _connection1.Writes.OfType<HeartBeat>().Count() - count1);
-            Assert.Equal(1, _connection2.Writes.OfType<HeartBeat>().Count() - count2);
+            Assert.Equal(1, _connection1.Writes.OfType<Heartbeat>().Count() - count1);
+            Assert.Equal(1, _connection2.Writes.OfType<Heartbeat>().Count() - count2);
 
             Thread.Sleep(100);
-            Assert.Equal(2, _connection1.Writes.OfType<HeartBeat>().Count() - count1);
-            Assert.Equal(2, _connection2.Writes.OfType<HeartBeat>().Count() - count2);
+            Assert.Equal(2, _connection1.Writes.OfType<Heartbeat>().Count() - count1);
+            Assert.Equal(2, _connection2.Writes.OfType<Heartbeat>().Count() - count2);
         }
 
         [Fact]
@@ -439,22 +439,22 @@ namespace TypeRealm.Server.Tests
 
             ConnectTwoPlayers();
 
-            _connection1.WaitFor<HeartBeat>();
-            _connection2.WaitFor<HeartBeat>();
+            _connection1.WaitFor<Heartbeat>();
+            _connection2.WaitFor<Heartbeat>();
 
-            var count1 = _connection1.Writes.OfType<HeartBeat>().Count();
-            var count2 = _connection2.Writes.OfType<HeartBeat>().Count();
+            var count1 = _connection1.Writes.OfType<Heartbeat>().Count();
+            var count2 = _connection2.Writes.OfType<Heartbeat>().Count();
 
             Thread.Sleep(150);
 
-            Assert.Equal(1, _connection1.Writes.OfType<HeartBeat>().Count() - count1);
-            Assert.Equal(1, _connection2.Writes.OfType<HeartBeat>().Count() - count2);
+            Assert.Equal(1, _connection1.Writes.OfType<Heartbeat>().Count() - count1);
+            Assert.Equal(1, _connection2.Writes.OfType<Heartbeat>().Count() - count2);
 
             _sut.Dispose();
 
             Thread.Sleep(100);
-            Assert.Equal(1, _connection1.Writes.OfType<HeartBeat>().Count() - count1);
-            Assert.Equal(1, _connection2.Writes.OfType<HeartBeat>().Count() - count2);
+            Assert.Equal(1, _connection1.Writes.OfType<Heartbeat>().Count() - count1);
+            Assert.Equal(1, _connection2.Writes.OfType<Heartbeat>().Count() - count2);
         }
 
         private void AssertWritten<T>(int index, TestConnection connection, Func<T, bool> predicate)

@@ -47,7 +47,7 @@ namespace TypeRealm.Server
                     {
                         try
                         {
-                            client.Connection.Write(new HeartBeat());
+                            client.Connection.Write(new Heartbeat());
                         }
                         catch
                         {

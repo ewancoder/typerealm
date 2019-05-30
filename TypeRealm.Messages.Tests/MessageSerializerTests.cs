@@ -1,57 +1,12 @@
 ﻿using System;
 using System.IO;
 using ProtoBuf;
-using TypeRealm.Messages.Connection;
 using Xunit;
 
 namespace TypeRealm.Messages.Tests
 {
-    public class MessageSerializerTests
+    public sealed class MessageSerializerTests
     {
-        [Fact]
-        public void ShouldSerializeAuthorizeMessage()
-        {
-            ShouldSerialize(new Authorize
-            {
-                Login = "login",
-                Password = "password"
-            }, message =>
-            {
-                Assert.Equal("login", message.Login);
-                Assert.Equal("password", message.Password);
-            });
-        }
-
-        [Fact]
-        public void ShouldSerializeQuitMessage()
-        {
-            ShouldSerialize(new Quit(), message => { });
-        }
-
-        [Fact]
-        public void ShouldSerializeDisconnectedMessage()
-        {
-            ShouldSerialize(new Disconnected
-            {
-                Reason = DisconnectReason.InvalidCredentials
-            }, message =>
-            {
-                Assert.Equal(DisconnectReason.InvalidCredentials, message.Reason);
-            });
-        }
-
-        [Fact]
-        public void ShouldSerializeSayMessage()
-        {
-            ShouldSerialize(new Say
-            {
-                Message = "message"
-            }, message =>
-            {
-                Assert.Equal("message", message.Message);
-            });
-        }
-
         [Fact]
         public void ShouldNotSerializeUnknownMessage()
         {
@@ -85,29 +40,6 @@ namespace TypeRealm.Messages.Tests
             {
                 Assert.Throws<InvalidOperationException>(
                     () => MessageSerializer.Read(stream));
-            }
-        }
-
-        private static void ShouldSerialize<T>(T message, Action<T> assert)
-            where T : class
-        {
-            byte[] bytes;
-
-            using (var stream = new MemoryStream())
-            {
-                MessageSerializer.Write(stream, message);
-
-                bytes = stream.ToArray();
-            }
-
-            Assert.NotEmpty(bytes);
-
-            using (var stream = new MemoryStream(bytes))
-            {
-                var deserialized = MessageSerializer.Read(stream) as T;
-
-                Assert.NotNull(deserialized);
-                assert(deserialized);
             }
         }
     }
