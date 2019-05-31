@@ -205,7 +205,7 @@ namespace TypeRealm.ConsoleApp.Networking
                 {
                     var message = _connection.Read();
 
-                    if (message is HeartBeat)
+                    if (message is Heartbeat)
                     {
                         _heartbeat.Stop();
                         _heartbeat.Start();

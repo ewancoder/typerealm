@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TypeRealm.Server
+namespace TypeRealm.Server.Networking
 {
     internal interface IClientListenerFactory
     {

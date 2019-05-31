@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TypeRealm.Domain;
 
-namespace TypeRealm.Server
+namespace TypeRealm.Server.Infrastructure
 {
     internal sealed class InMemoryAccountRepository : IAccountRepository
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using TypeRealm.Domain;
-using TypeRealm.Messages;
 using TypeRealm.Messages.Connection;
-using TypeRealm.Messages.Movement;
+using TypeRealm.Server.Messaging;
+using TypeRealm.Server.Networking;
 
 namespace TypeRealm.Server
 {
@@ -17,7 +17,7 @@ namespace TypeRealm.Server
         private readonly ILogger _logger;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMessageDispatcher _messageDispatcher;
-        private readonly IPlayerRepository _playerRepository;
+        private readonly IStatusFactory _statusFactory;
         private readonly List<ConnectedClient> _connectedClients;
 
         private IDisposable _listener;
@@ -25,26 +25,34 @@ namespace TypeRealm.Server
 
         public Server(
             int port,
+            TimeSpan heartbeatInterval,
             ILogger logger,
             IAuthorizationService authorizationService,
             IMessageDispatcher messageDispatcher,
-            IPlayerRepository playerRepository,
+            IStatusFactory statusFactory,
             IClientListenerFactory clientListenerFactory)
         {
             _logger = logger;
             _authorizationService = authorizationService;
             _messageDispatcher = messageDispatcher;
-            _playerRepository = playerRepository;
+            _statusFactory = statusFactory;
             _connectedClients = new List<ConnectedClient>();
 
-            _heartbeat = new Timer(1000);
+            _heartbeat = new Timer(heartbeatInterval.TotalMilliseconds);
             _heartbeat.Elapsed += (object sender, ElapsedEventArgs e) =>
             {
                 lock (_lock)
                 {
                     foreach (var client in _connectedClients)
                     {
-                        client.Connection.TryWrite(new HeartBeat());
+                        try
+                        {
+                            client.Connection.Write(new Heartbeat());
+                        }
+                        catch
+                        {
+                            // Swallow exception. It's not critical if client doesn't get heartbeat.
+                        }
                     }
                 }
             };
@@ -70,6 +78,9 @@ namespace TypeRealm.Server
 
         private void HandleConnection(IConnection connection)
         {
+            // TODO: Make sure this method returns and doesn't run in background
+            // after Dispose was called or client was disconnected for some reason.
+
             var authorizeMessage = connection.Read() as Authorize;
             if (authorizeMessage == null)
                 return;
@@ -96,12 +107,15 @@ namespace TypeRealm.Server
 
                 _connectedClients.Add(client);
                 _logger.Log($"{client.PlayerId} has connected.");
+
+                // Update all clients without releasing lock.
+                // If clients c1 and c2 has connected together in parallel and
+                // released their locks - status will be send to them twice.
+                UpdateAll();
             }
 
             try
             {
-                UpdateAll();
-
                 while (true)
                 {
                     var message = connection.Read();
@@ -143,57 +157,22 @@ namespace TypeRealm.Server
             {
                 foreach(var client in _connectedClients)
                 {
-                    if (!TrySendStatus(client))
+                    try
                     {
-                        _logger.Log($"Failed to send update status to {client.PlayerId} player.");
+                        var status = _statusFactory.MakeStatus(
+                            client.PlayerId, _connectedClients.Select(c => c.PlayerId));
+
+                        if (status == null)
+                            throw new InvalidOperationException($"Could not make status for {client.PlayerId}.");
+
+                        client.Connection.Write(status);
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.Log($"Failed to send update status to {client.PlayerId} player.", exception);
                     }
                 }
             }
-        }
-
-        // The user of this method (as well as MakeStatus) should lock this operation.
-        private bool TrySendStatus(ConnectedClient client)
-        {
-            var player = _playerRepository.Find(client.PlayerId);
-
-            if (player == null)
-                throw new InvalidOperationException($"Player {client.PlayerId} does not exist.");
-
-            var status = MakeStatus(player);
-
-            return client.Connection.TryWrite(status);
-        }
-
-        private Status MakeStatus(Player player)
-        {
-            var neighbors = _connectedClients
-                .Select(c => _playerRepository.Find(c.PlayerId))
-                .Where(c => c.IsAtSamePlaceAs(player) && c.PlayerId != player.PlayerId)
-                .Select(c => c.Name.Value)
-                .ToList();
-
-            var status = new Status
-            {
-                Name = player.Name,
-                LocationId = player.LocationId,
-                Neighbors = neighbors
-            };
-
-            if (player.MovementInformation != null)
-            {
-                status.MovementStatus = new MovementStatus
-                {
-                    RoadId = player.MovementInformation.Road.RoadId,
-                    Direction = (MovementDirection)player.MovementInformation.Direction,
-                    Progress = new MovementProgress
-                    {
-                        Distance = player.MovementInformation.Distance,
-                        Progress = player.MovementInformation.Progress
-                    }
-                };
-            }
-
-            return status;
         }
     }
 }

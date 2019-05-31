@@ -1,4 +1,4 @@
-﻿namespace TypeRealm.Server
+﻿namespace TypeRealm.Server.Messaging
 {
     internal interface IMessageDispatcher
     {

@@ -2,6 +2,7 @@
 
 namespace TypeRealm.Domain
 {
+    // This class is tested through PlayerTests.
     public sealed class MovementInformation
     {
         private MovementInformation(Road road, Distance progress, RoadDirection direction)
@@ -21,10 +22,10 @@ namespace TypeRealm.Domain
 
         public MovementInformation Move(Distance progress)
         {
-            var newProgress = Progress.Add(progress);
+            var newProgress = Progress + progress;
             var distance = Road.GetDistanceFor(Direction);
 
-            if (newProgress.IsGreaterThan(distance))
+            if (newProgress > distance)
                 throw new InvalidOperationException("Can't progress beyond distance.");
 
             return new MovementInformation(
@@ -35,7 +36,7 @@ namespace TypeRealm.Domain
         {
             var newDirection = Direction.Flip();
 
-            if (Progress.IsZero())
+            if (Progress.IsZero)
             {
                 var newDistance = Road.GetDistanceFor(newDirection);
                 return new MovementInformation(Road, newDistance, newDirection);

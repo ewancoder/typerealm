@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TypeRealm.Domain.Tests
+namespace TypeRealm.Domain.Tests.Common
 {
     internal static class Fixture
     {
@@ -11,7 +11,12 @@ namespace TypeRealm.Domain.Tests
 
         public static AccountId AccountId()
         {
-            return new AccountId(new Guid("11111111-1111-1111-1111-111111111111"));
+            return new AccountId(new Guid("21111111-1111-1111-1111-111111111111"));
+        }
+
+        internal static RoadPoint RoadPoint()
+        {
+            return new RoadPoint(LocationId(), 10);
         }
 
         public static PlayerName PlayerName()

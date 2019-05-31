@@ -1,7 +1,8 @@
 ﻿using System;
 using TypeRealm.Messages;
+using TypeRealm.Server.Messaging;
 
-namespace TypeRealm.Server
+namespace TypeRealm.Server.Infrastructure
 {
     internal sealed class EchoMessageDispatcher : IMessageDispatcher
     {

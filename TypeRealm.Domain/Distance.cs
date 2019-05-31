@@ -10,16 +10,7 @@ namespace TypeRealm.Domain
                 throw new ArgumentException("Distance cannot have negative value.", nameof(value));
         }
 
-        public Distance Add(Distance distance)
-            => new Distance(Value + distance);
-
-        public bool IsGreaterThan(Distance distance)
-            => Value > distance;
-
-        public bool IsZero()
-        {
-            return Value == 0;
-        }
+        public bool IsZero => Value == 0;
 
         public static Distance Zero => new Distance(0);
 

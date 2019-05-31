@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using TypeRealm.Messages;
 
-namespace TypeRealm.Server
+namespace TypeRealm.Server.Networking
 {
     internal sealed class StreamConnection : IConnection
     {

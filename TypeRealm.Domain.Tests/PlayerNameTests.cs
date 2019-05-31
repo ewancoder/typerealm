@@ -1,9 +1,10 @@
 ﻿using System;
+using TypeRealm.Domain.Tests.Common;
 using Xunit;
 
 namespace TypeRealm.Domain.Tests
 {
-    public class PlayerNameTests
+    public sealed class PlayerNameTests
     {
         [Fact]
         public void ShouldBePrimitive()
@@ -38,6 +39,19 @@ namespace TypeRealm.Domain.Tests
             Assert.Equal("abcd", new PlayerName("abcd").Value);
             Assert.Equal(new string('a', 20), new PlayerName(new string('a', 20)).Value);
             Assert.Equal(new string('a', 19), new PlayerName(new string('a', 19)).Value);
+        }
+
+        [Fact]
+        public void ShouldBeImplicitelyConvertible()
+        {
+            string value;
+            var playerName = new PlayerName("player name");
+            value = playerName;
+
+            Assert.Equal("player name", value);
+
+            PlayerName fromValue = value;
+            Assert.Equal("player name", fromValue.Value);
         }
     }
 }

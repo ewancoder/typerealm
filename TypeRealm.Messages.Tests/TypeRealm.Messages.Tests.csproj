@@ -57,9 +57,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonMessages.cs" />
+    <Compile Include="ConnectionMessages.cs" />
     <Compile Include="IndexedCollectionTests.cs" />
     <Compile Include="MessageSerializerTests.cs" />
+    <Compile Include="MovementMessages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Should.cs" />
+    <Compile Include="TypeLoaderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

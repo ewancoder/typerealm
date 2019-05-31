@@ -40,7 +40,7 @@
   <ItemGroup>
     <Compile Include="Connection\Authorize.cs" />
     <Compile Include="Connection\Disconnected.cs" />
-    <Compile Include="Connection\HeartBeat.cs" />
+    <Compile Include="Connection\Heartbeat.cs" />
     <Compile Include="Movement\MovementDirection.cs" />
     <Compile Include="Movement\MovementStatus.cs" />
     <Compile Include="Movement\EnterRoad.cs" />
