@@ -7,37 +7,37 @@ namespace TypeRealm.ConsoleApp.Networking
 {
     public sealed class GameMessageDispatcher : IMessageDispatcher
     {
-        private readonly Game _game; // Hack for dispatching for now.
+        private readonly OutputHandler _outputHandler;
 
-        public GameMessageDispatcher(Game game)
+        public GameMessageDispatcher(OutputHandler outputHandler)
         {
-            _game = game;
+            _outputHandler = outputHandler;
         }
 
         public void Dispatch(object message)
         {
             if (message is Status status)
             {
-                _game.Update(status);
+                _outputHandler.Update(status);
                 return;
             }
 
             if (message is Disconnected disconnected)
             {
                 // Stop listening.
-                _game.Disconnect(disconnected.Reason.ToString());
+                _outputHandler.Disconnect(disconnected.Reason.ToString());
                 return;
             }
 
             if (message is Say say)
             {
-                _game.Notify(say.Message);
+                _outputHandler.Notify(say.Message);
                 return;
             }
 
             if (message is Reconnecting reconnecting)
             {
-                _game.Reconnecting();
+                _outputHandler.Reconnecting();
                 return;
             }
 

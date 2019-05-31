@@ -37,12 +37,16 @@ namespace TypeRealm.ConsoleApp
 
             var output = new ConsoleOutput();
             var printer = new Printer(output, dataStore);
+            var outputHandler = new OutputHandler(printer);
+            var dispatcher = new GameMessageDispatcher(outputHandler);
 
             // Game constructor synchronously connects to the server.
-            using (var game = new Game(connectionFactory, printer, authorize))
+            using (var messages = new MessageProcessor(connectionFactory, dispatcher, authorize, Reconnect.Default()))
             {
+                var inputHandler = new InputHandler(messages);
+
                 // If connection was unsuccessful - exit.
-                if (!game.IsRunning)
+                if (!messages.IsConnected)
                 {
                     Console.WriteLine("Game over.");
                     Console.ReadLine();
@@ -54,14 +58,14 @@ namespace TypeRealm.ConsoleApp
                 {
                     var key = Console.ReadKey(true);
 
-                    if (!game.IsRunning)
+                    if (!messages.IsConnected)
                     {
                         Console.WriteLine("Game over.");
                         Console.ReadLine();
                         return;
                     }
 
-                    game.Input(key);
+                    inputHandler.Input(key);
                 }
             }
         }
