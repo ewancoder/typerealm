@@ -3,7 +3,7 @@ using Xunit;
 
 namespace TypeRealm.Domain.Tests
 {
-    public class AccountIdTests
+    public sealed class AccountIdTests
     {
         [Fact]
         public void ShouldBePrimitive()
@@ -15,6 +15,17 @@ namespace TypeRealm.Domain.Tests
         public void ShouldThrowWhenEmpty()
         {
             Assert.Throws<ArgumentException>(() => new AccountId(Guid.Empty));
+        }
+
+        [Fact]
+        public void ShouldCreateUnique()
+        {
+            var id1 = AccountId.New();
+            var id2 = AccountId.New();
+
+            Assert.NotEqual(Guid.Empty, id1.Value);
+            Assert.NotEqual(Guid.Empty, id2.Value);
+            Assert.NotEqual(id1, id2);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Xunit;
 
-namespace TypeRealm.Domain.Tests
+namespace TypeRealm.Domain.Tests.Common
 {
-    public static class PlayerAsserts
+    public static class PlayerAssertExtensions
     {
         public static void AssertStayingAt(this Player player, LocationId locationId)
         {

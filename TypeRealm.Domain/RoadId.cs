@@ -9,11 +9,5 @@ namespace TypeRealm.Domain
             if (value <= 0)
                 throw new ArgumentException("Road identity should have a positive value.", nameof(value));
         }
-
-        public static implicit operator int(RoadId roadId)
-            => roadId.Value;
-
-        public static implicit operator RoadId(int value)
-            => new RoadId(value);
     }
 }

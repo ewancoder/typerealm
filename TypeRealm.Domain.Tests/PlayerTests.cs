@@ -1,9 +1,10 @@
 ﻿using System;
+using TypeRealm.Domain.Tests.Common;
 using Xunit;
 
 namespace TypeRealm.Domain.Tests
 {
-    public class PlayerTests
+    public sealed class PlayerTests
     {
         [Fact]
         public void ShouldCreatePlayer()
@@ -19,6 +20,7 @@ namespace TypeRealm.Domain.Tests
             Assert.Equal(accountId, player.AccountId);
             Assert.Equal(playerName, player.Name);
             Assert.Equal(locationId, player.LocationId);
+            Assert.Null(player.MovementInformation);
         }
 
         [Fact]
@@ -59,16 +61,16 @@ namespace TypeRealm.Domain.Tests
         }
 
         [Fact]
-        public void ShouldStandOnSamePlace()
+        public void ShouldStandOnSamePlaceWhenMovingByZero()
         {
             var villageToForest = Roads.FromTo(
-                Locations.Village(), Locations.Forest());
+                Locations.Village(), Locations.Forest(), 100);
 
-            var player = Fixture.PlayerAt(villageToForest, Distance.Zero, RoadDirection.Forward);
+            var player = Fixture.PlayerAt(villageToForest, 10, RoadDirection.Forward);
 
             player.Move(Distance.Zero);
 
-            player.AssertMovingAt(villageToForest, Distance.Zero, RoadDirection.Forward);
+            player.AssertMovingAt(villageToForest, 10, RoadDirection.Forward);
         }
 
         [Fact]

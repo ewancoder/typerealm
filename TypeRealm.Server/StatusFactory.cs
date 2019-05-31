@@ -38,7 +38,7 @@ namespace TypeRealm.Server
             var status = new Status
             {
                 Name = player.Name,
-                LocationId = player.LocationId,
+                LocationId = player.LocationId.Value,
                 Neighbors = neighbors
             };
 
@@ -46,7 +46,7 @@ namespace TypeRealm.Server
             {
                 status.MovementStatus = new MovementStatus
                 {
-                    RoadId = player.MovementInformation.Road.RoadId,
+                    RoadId = player.MovementInformation.Road.RoadId.Value,
                     Direction = (MovementDirection)player.MovementInformation.Direction,
                     Progress = new MovementProgress
                     {

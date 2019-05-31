@@ -3,7 +3,7 @@ using Xunit;
 
 namespace TypeRealm.Domain.Tests
 {
-    public class PrimitiveTests
+    public sealed class PrimitiveTests
     {
         private sealed class TestReferencePrimitive : Primitive<string>
         {

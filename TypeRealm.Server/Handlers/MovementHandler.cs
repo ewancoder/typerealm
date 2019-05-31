@@ -40,8 +40,10 @@ namespace TypeRealm.Server.Handlers
 
         private void Handle(ConnectedClient sender, EnterRoad message)
         {
+            var roadId = new RoadId(message.RoadId);
+
             var player = _playerRepository.Find(sender.PlayerId);
-            var road = _roadStore.Find(message.RoadId);
+            var road = _roadStore.Find(roadId);
 
             player.EnterRoad(road);
             _playerRepository.Save(player);

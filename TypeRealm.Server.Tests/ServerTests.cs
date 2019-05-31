@@ -227,6 +227,7 @@ namespace TypeRealm.Server.Tests
             _connection2.StillListens();
         }
 
+        // TODO: Check why this test fails sometimes.
         [Fact]
         public void ShouldStopListeningWhenFirstMessageIsNotAuthorize()
         {

@@ -15,5 +15,8 @@ namespace TypeRealm.Domain
 
         public static implicit operator string(PlayerName playerName)
             => playerName.Value;
+
+        public static implicit operator PlayerName(string value)
+            => new PlayerName(value);
     }
 }

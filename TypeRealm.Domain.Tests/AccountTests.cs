@@ -1,13 +1,14 @@
-﻿using Xunit;
+﻿using TypeRealm.Domain.Tests.Common;
+using Xunit;
 
 namespace TypeRealm.Domain.Tests
 {
-    public class AccountTests
+    public sealed class AccountTests
     {
         [Fact]
         public void ShouldCreate()
         {
-            var accountId = AccountId.New();
+            var accountId = Fixture.AccountId();
             var account = new Account(accountId, "login", "password");
 
             Assert.Equal(accountId, account.AccountId);
@@ -20,7 +21,7 @@ namespace TypeRealm.Domain.Tests
         {
             var account = Fixture.Account();
 
-            var playerId = PlayerId.New();
+            var playerId = Fixture.PlayerId();
             var playerName = Fixture.PlayerName();
             var locationId = Fixture.LocationId();
 
@@ -30,6 +31,7 @@ namespace TypeRealm.Domain.Tests
             Assert.Equal(playerId, player.PlayerId);
             Assert.Equal(playerName, player.Name);
             Assert.Equal(locationId, player.LocationId);
+            Assert.Null(player.MovementInformation);
         }
     }
 }
