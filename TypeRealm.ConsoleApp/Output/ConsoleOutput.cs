@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TypeRealm.ConsoleApp
+namespace TypeRealm.ConsoleApp.Output
 {
     public sealed class ConsoleOutput : IOutput
     {

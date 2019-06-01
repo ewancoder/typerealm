@@ -58,6 +58,7 @@
     <Compile Include="LocationIdTests.cs" />
     <Compile Include="Locations.cs" />
     <Compile Include="Common\PlayerAssertExtensions.cs" />
+    <Compile Include="LocationTests.cs" />
     <Compile Include="PlayerIdTests.cs" />
     <Compile Include="PlayerNameTests.cs" />
     <Compile Include="PlayerTests.cs" />

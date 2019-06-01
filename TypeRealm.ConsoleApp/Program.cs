@@ -1,6 +1,9 @@
 ﻿using System;
 using TypeRealm.ConsoleApp.Data;
+using TypeRealm.ConsoleApp.Messaging;
 using TypeRealm.ConsoleApp.Networking;
+using TypeRealm.ConsoleApp.Output;
+using TypeRealm.ConsoleApp.Typing;
 using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp
@@ -37,13 +40,16 @@ namespace TypeRealm.ConsoleApp
 
             var output = new ConsoleOutput();
             var printer = new Printer(output, dataStore);
-            var outputHandler = new OutputHandler(printer);
-            var dispatcher = new GameMessageDispatcher(outputHandler);
+            var textStore = new InMemoryTextStore();
+
+            var dispatcher = new GameMessageDispatcher();
 
             // Game constructor synchronously connects to the server.
             using (var messages = new MessageProcessor(connectionFactory, dispatcher, authorize, Reconnect.Default()))
             {
-                var inputHandler = new InputHandler(messages);
+                var game = new Game(textStore, messages, printer);
+                dispatcher.SetGame(game);
+                messages.Connect();
 
                 // If connection was unsuccessful - exit.
                 if (!messages.IsConnected)
@@ -65,7 +71,7 @@ namespace TypeRealm.ConsoleApp
                         return;
                     }
 
-                    inputHandler.Input(key);
+                    game.Input(key);
                 }
             }
         }

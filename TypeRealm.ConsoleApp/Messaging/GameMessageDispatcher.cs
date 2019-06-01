@@ -3,41 +3,41 @@ using TypeRealm.ConsoleApp.Messages;
 using TypeRealm.Messages;
 using TypeRealm.Messages.Connection;
 
-namespace TypeRealm.ConsoleApp.Networking
+namespace TypeRealm.ConsoleApp.Messaging
 {
-    public sealed class GameMessageDispatcher : IMessageDispatcher
+    internal sealed class GameMessageDispatcher : IMessageDispatcher
     {
-        private readonly OutputHandler _outputHandler;
+        private Game _game;
 
-        public GameMessageDispatcher(OutputHandler outputHandler)
+        // HACK: We have a circular dependency.
+        public void SetGame(Game game)
         {
-            _outputHandler = outputHandler;
+            _game = game;
         }
 
         public void Dispatch(object message)
         {
             if (message is Status status)
             {
-                _outputHandler.Update(status);
+                _game.UpdateState(status);
                 return;
             }
 
             if (message is Disconnected disconnected)
             {
-                // Stop listening.
-                _outputHandler.Disconnect(disconnected.Reason.ToString());
+                _game.Disconnect();
                 return;
             }
 
             if (message is Say say)
             {
-                _outputHandler.Notify(say.Message);
+                _game.Notify(say.Message);
                 return;
             }
 
             if (message is Reconnecting reconnecting)
             {
-                _outputHandler.Reconnecting();
+                _game.Reconnecting();
                 return;
             }
 

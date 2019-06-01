@@ -1,4 +1,4 @@
-﻿namespace TypeRealm.ConsoleApp
+﻿namespace TypeRealm.ConsoleApp.Output
 {
     public interface IOutput
     {

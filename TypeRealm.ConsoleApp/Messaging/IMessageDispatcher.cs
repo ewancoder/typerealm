@@ -1,4 +1,4 @@
-﻿namespace TypeRealm.ConsoleApp.Networking
+﻿namespace TypeRealm.ConsoleApp.Messaging
 {
     public interface IMessageDispatcher
     {

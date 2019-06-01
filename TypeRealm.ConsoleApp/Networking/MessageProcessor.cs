@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Timers;
 using TypeRealm.ConsoleApp.Messages;
+using TypeRealm.ConsoleApp.Messaging;
 using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp.Networking
@@ -38,7 +39,8 @@ namespace TypeRealm.ConsoleApp.Networking
                 Reconnect();
             };
 
-            Connect();
+            // HACK. Need to call Connect method separately after setting up dependencies.
+            //Connect();
         }
 
         public bool IsConnected { get; private set; }
@@ -91,7 +93,7 @@ namespace TypeRealm.ConsoleApp.Networking
         }
 
         // If connection is unsuccessful - IsConnected will remain false.
-        private void Connect()
+        public void Connect()
         {
             object message = null;
 

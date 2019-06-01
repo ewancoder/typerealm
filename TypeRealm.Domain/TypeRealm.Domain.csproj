@@ -42,6 +42,7 @@
     <Compile Include="ILocationStore.cs" />
     <Compile Include="IPlayerRepository.cs" />
     <Compile Include="IRoadStore.cs" />
+    <Compile Include="Location.cs" />
     <Compile Include="LocationId.cs" />
     <Compile Include="MovementInformation.cs" />
     <Compile Include="Road.cs" />
