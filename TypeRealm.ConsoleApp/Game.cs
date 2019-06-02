@@ -88,8 +88,9 @@ namespace TypeRealm.ConsoleApp
                 // If state already way OnTheRoad, then previous MovementStatus shouldn't be null.
                 if (previousStatus.MovementStatus.Direction != status.MovementStatus.Direction
                     || previousStatus.MovementStatus.RoadId != status.MovementStatus.RoadId
-                    || previousStatus.MovementStatus.Progress.Distance != status.MovementStatus.Progress.Distance
-                    || previousStatus.MovementStatus.Progress.Progress != status.MovementStatus.Progress.Progress)
+                    || previousStatus.MovementStatus.Progress.Distance != status.MovementStatus.Progress.Distance)
+                    // If we update road typer when Progress has changed, text will change every 10 steps.
+                    //|| previousStatus.MovementStatus.Progress.Progress != status.MovementStatus.Progress.Progress)
                 {
                     // Something has changed. Update everything.
                     var distance = status.MovementStatus.Progress.Distance;
@@ -101,8 +102,9 @@ namespace TypeRealm.ConsoleApp
 
                     SetRoad(roadTyper);
                     Print();
-                    return;
                 }
+
+                return;
             }
 
             if (_state != GameState.AtLocation)
