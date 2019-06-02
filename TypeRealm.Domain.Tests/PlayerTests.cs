@@ -151,6 +151,18 @@ namespace TypeRealm.Domain.Tests
         }
 
         [Fact]
+        public void ShouldNotFinishWalkingIfTurnedBackOnUnevenRoad()
+        {
+            var villageToForest = Roads.FromTo(
+                Locations.Village(), 100_000_000, Locations.Forest(), 10);
+
+            var player = Fixture.PlayerAt(villageToForest, 1, RoadDirection.Forward);
+
+            player.TurnAround();
+            player.AssertMovingAt(villageToForest, 9, RoadDirection.Backward);
+        }
+
+        [Fact]
         public void ShouldTurnBackOnUnevenRoad()
         {
             var villageToForest = Roads.FromTo(
