@@ -1,6 +1,9 @@
 ﻿using System;
 using TypeRealm.ConsoleApp.Data;
+using TypeRealm.ConsoleApp.Messaging;
 using TypeRealm.ConsoleApp.Networking;
+using TypeRealm.ConsoleApp.Output;
+using TypeRealm.ConsoleApp.Typing;
 using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp
@@ -37,12 +40,19 @@ namespace TypeRealm.ConsoleApp
 
             var output = new ConsoleOutput();
             var printer = new Printer(output, dataStore);
+            var textStore = new InMemoryTextStore();
+
+            var dispatcher = new GameMessageDispatcher();
 
             // Game constructor synchronously connects to the server.
-            using (var game = new Game(connectionFactory, printer, authorize))
+            using (var messages = new MessageProcessor(connectionFactory, dispatcher, authorize, Reconnect.Default()))
             {
+                var game = new Game(textStore, messages, printer);
+                dispatcher.SetGame(game);
+                messages.Connect();
+
                 // If connection was unsuccessful - exit.
-                if (!game.IsRunning)
+                if (!messages.IsConnected)
                 {
                     Console.WriteLine("Game over.");
                     Console.ReadLine();
@@ -54,7 +64,7 @@ namespace TypeRealm.ConsoleApp
                 {
                     var key = Console.ReadKey(true);
 
-                    if (!game.IsRunning)
+                    if (!messages.IsConnected)
                     {
                         Console.WriteLine("Game over.");
                         Console.ReadLine();

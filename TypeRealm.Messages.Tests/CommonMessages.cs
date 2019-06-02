@@ -39,7 +39,8 @@ namespace TypeRealm.Messages.Tests
                 {
                     "neighbor 1",
                     "neighbor 2"
-                }
+                },
+                Roads = new List<int> { 1, 2 }
             }, message =>
             {
                 Assert.Equal(10, message.LocationId);
@@ -51,6 +52,19 @@ namespace TypeRealm.Messages.Tests
                 Assert.Equal(2, message.Neighbors.Count);
                 Assert.Equal("neighbor 1", message.Neighbors[0]);
                 Assert.Equal("neighbor 2", message.Neighbors[1]);
+                Assert.Equal(2, message.Roads.Count);
+                Assert.Equal(1, message.Roads[0]);
+                Assert.Equal(2, message.Roads[1]);
+            });
+        }
+
+        [Fact]
+        public void ShouldNotForgetToCreateDefaultListsForStatusMessage()
+        {
+            Should.Serialize(new Status(), message =>
+            {
+                Assert.Empty(message.Neighbors);
+                Assert.Empty(message.Roads);
             });
         }
     }

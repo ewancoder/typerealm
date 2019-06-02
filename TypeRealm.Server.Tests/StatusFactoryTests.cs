@@ -10,12 +10,14 @@ namespace TypeRealm.Server.Tests
     public sealed class StatusFactoryTests
     {
         private readonly Mock<IPlayerRepository> _playerRepositoryMock;
+        private readonly Mock<ILocationStore> _locationStoreMock;
         private readonly StatusFactory _sut;
 
         public StatusFactoryTests()
         {
             _playerRepositoryMock = new Mock<IPlayerRepository>();
-            _sut = new StatusFactory(_playerRepositoryMock.Object);
+            _locationStoreMock = new Mock<ILocationStore>();
+            _sut = new StatusFactory(_playerRepositoryMock.Object, _locationStoreMock.Object);
         }
 
         [Fact]
@@ -31,7 +33,7 @@ namespace TypeRealm.Server.Tests
             var playerId = Fixture.PlayerId();
             var anotherPlayerId = PlayerId.New();
 
-            AddToRepository(playerId, Fixture.PlayerName(), Fixture.LocationId());
+            AddToRepositoryAndSetupLocationStore(playerId, Fixture.PlayerName(), Fixture.LocationId());
 
             Assert.Throws<InvalidOperationException>(() => _sut.MakeStatus(playerId, new[]
             {
@@ -45,7 +47,7 @@ namespace TypeRealm.Server.Tests
             var playerId = PlayerId.New();
             var locationId = new LocationId(10);
 
-            AddToRepository(playerId, new PlayerName("player 1"), locationId);
+            AddToRepositoryAndSetupLocationStore(playerId, new PlayerName("player 1"), locationId);
 
             var status = _sut.MakeStatus(playerId, new[] { playerId });
 
@@ -64,8 +66,8 @@ namespace TypeRealm.Server.Tests
             var location1 = new LocationId(10);
             var location2 = new LocationId(20);
 
-            AddToRepository(player1, new PlayerName("player 1"), location1);
-            AddToRepository(player2, new PlayerName("player 2"), location2);
+            AddToRepositoryAndSetupLocationStore(player1, new PlayerName("player 1"), location1);
+            AddToRepositoryAndSetupLocationStore(player2, new PlayerName("player 2"), location2);
 
             var status = _sut.MakeStatus(player1, new[]
             {
@@ -89,9 +91,9 @@ namespace TypeRealm.Server.Tests
             var location2 = new LocationId(20);
             var location3 = new LocationId(10);
 
-            AddToRepository(player1, new PlayerName("player 1"), location1);
-            AddToRepository(player2, new PlayerName("player 2"), location2);
-            AddToRepository(player3, new PlayerName("player 3"), location3);
+            AddToRepositoryAndSetupLocationStore(player1, new PlayerName("player 1"), location1);
+            AddToRepositoryAndSetupLocationStore(player2, new PlayerName("player 2"), location2);
+            AddToRepositoryAndSetupLocationStore(player3, new PlayerName("player 3"), location3);
 
             var status = _sut.MakeStatus(player1, new[]
             {
@@ -111,7 +113,7 @@ namespace TypeRealm.Server.Tests
             var playerId = PlayerId.New();
             var locationId = new LocationId(10);
 
-            AddToRepository(playerId, new PlayerName("player 1"), locationId);
+            AddToRepositoryAndSetupLocationStore(playerId, new PlayerName("player 1"), locationId);
 
             var status = _sut.MakeStatus(playerId, new[] { playerId });
 
@@ -123,7 +125,7 @@ namespace TypeRealm.Server.Tests
         {
             var playerId = PlayerId.New();
 
-            AddToRepository(playerId, new RoadId(15), 100, 40);
+            AddToRepositoryAndSetupLocationStore(playerId, new RoadId(15), 100, 40);
 
             var status = _sut.MakeStatus(playerId, new[] { playerId });
 
@@ -134,22 +136,69 @@ namespace TypeRealm.Server.Tests
             Assert.Equal(40, status.MovementStatus.Progress.Progress);
         }
 
-        private void AddToRepository(PlayerId playerId, PlayerName playerName, LocationId locationId)
+        [Fact]
+        public void ShouldThrowIfLocationNotFound()
+        {
+            var playerId = PlayerId.New();
+            var locationId = new LocationId(10);
+
+            AddToRepositoryAndSetupLocationStore(playerId, new PlayerName("player"), locationId);
+
+            _locationStoreMock
+                .Setup(x => x.GetLocation(locationId))
+                .Returns<Location>(null);
+
+            Assert.Throws<InvalidOperationException>(
+                () => _sut.MakeStatus(playerId, new[] { playerId }));
+        }
+
+        [Fact]
+        public void ShouldHaveRoadsInStatus()
+        {
+            var playerId = PlayerId.New();
+            var locationId = new LocationId(10);
+
+            AddToRepositoryAndSetupLocationStore(playerId, new PlayerName("player"), locationId);
+
+            var road1 = new RoadId(10);
+            var road2 = new RoadId(20);
+
+            _locationStoreMock
+                .Setup(x => x.GetLocation(locationId))
+                .Returns(new Location(new[] { road1, road2 }));
+
+            var status = _sut.MakeStatus(playerId, new[] { playerId });
+
+            Assert.Equal(2, status.Roads.Count);
+            Assert.Equal(10, status.Roads[0]);
+            Assert.Equal(20, status.Roads[1]);
+        }
+
+        private void AddToRepositoryAndSetupLocationStore(PlayerId playerId, PlayerName playerName, LocationId locationId)
         {
             var player = Fixture.Player(playerId, playerName, locationId);
 
             _playerRepositoryMock
                 .Setup(x => x.Find(playerId))
                 .Returns(player);
+
+            _locationStoreMock
+                .Setup(x => x.GetLocation(locationId))
+                .Returns(new Location(Enumerable.Empty<RoadId>()));
         }
 
-        private void AddToRepository(PlayerId playerId, RoadId roadId, Distance distance, Distance progress)
+        private void AddToRepositoryAndSetupLocationStore(PlayerId playerId, RoadId roadId, Distance distance, Distance progress)
         {
             var player = Fixture.Player(playerId, roadId, distance, progress);
 
             _playerRepositoryMock
                 .Setup(x => x.Find(playerId))
                 .Returns(player);
+
+            _locationStoreMock
+                .Setup(x => x.GetLocation(Fixture.LocationId()))
+                .Returns(new Location(Enumerable.Empty<RoadId>()));
+
         }
     }
 }

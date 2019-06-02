@@ -40,26 +40,36 @@
   <ItemGroup>
     <Compile Include="Data\IDataStore.cs" />
     <Compile Include="Data\InMemoryDataStore.cs" />
+    <Compile Include="Data\InMemoryTextStore.cs" />
+    <Compile Include="Data\ITextStore.cs" />
     <Compile Include="Data\Location.cs" />
     <Compile Include="Data\Road.cs" />
-    <Compile Include="Messages\Reconnecting.cs" />
-    <Compile Include="Networking\GameMessageDispatcher.cs" />
-    <Compile Include="Networking\IMessageDispatcher.cs" />
-    <Compile Include="Networking\IMessageProcessor.cs" />
-    <Compile Include="IOutput.cs" />
-    <Compile Include="IPrinter.cs" />
-    <Compile Include="Networking\MessageProcessor.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Messages\Reconnecting.cs" />
+    <Compile Include="Messaging\IMessageSender.cs" />
+    <Compile Include="Messaging\GameMessageDispatcher.cs" />
+    <Compile Include="Messaging\IMessageDispatcher.cs" />
+    <Compile Include="Networking\IMessageProcessor.cs" />
+    <Compile Include="Output\IOutput.cs" />
+    <Compile Include="Output\IPrinter.cs" />
+    <Compile Include="Networking\MessageProcessor.cs" />
     <Compile Include="Networking\IConnectionFactory.cs" />
     <Compile Include="Networking\IConnection.cs" />
-    <Compile Include="ConsoleOutput.cs" />
+    <Compile Include="Output\ConsoleOutput.cs" />
     <Compile Include="Networking\Reconnect.cs" />
     <Compile Include="Networking\TaskExtentions.cs" />
-    <Compile Include="Printer.cs" />
+    <Compile Include="Output\Layout.cs" />
+    <Compile Include="Output\OutputExtensions.cs" />
+    <Compile Include="Output\Printer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\TcpConnection.cs" />
     <Compile Include="Networking\TcpConnectionFactory.cs" />
+    <Compile Include="Typing\IInputHandler.cs" />
+    <Compile Include="Typing\LocationTypers.cs" />
+    <Compile Include="Typing\MultiTyper.cs" />
+    <Compile Include="Typing\RoadTyper.cs" />
+    <Compile Include="Typing\Typer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeRealm.Domain\TypeRealm.Domain.csproj">

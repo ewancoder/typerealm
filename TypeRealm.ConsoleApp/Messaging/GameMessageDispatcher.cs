@@ -3,13 +3,14 @@ using TypeRealm.ConsoleApp.Messages;
 using TypeRealm.Messages;
 using TypeRealm.Messages.Connection;
 
-namespace TypeRealm.ConsoleApp.Networking
+namespace TypeRealm.ConsoleApp.Messaging
 {
-    public sealed class GameMessageDispatcher : IMessageDispatcher
+    internal sealed class GameMessageDispatcher : IMessageDispatcher
     {
-        private readonly Game _game; // Hack for dispatching for now.
+        private Game _game;
 
-        public GameMessageDispatcher(Game game)
+        // HACK: We have a circular dependency.
+        public void SetGame(Game game)
         {
             _game = game;
         }
@@ -18,14 +19,13 @@ namespace TypeRealm.ConsoleApp.Networking
         {
             if (message is Status status)
             {
-                _game.Update(status);
+                _game.UpdateState(status);
                 return;
             }
 
             if (message is Disconnected disconnected)
             {
-                // Stop listening.
-                _game.Disconnect(disconnected.Reason.ToString());
+                _game.Disconnect();
                 return;
             }
 

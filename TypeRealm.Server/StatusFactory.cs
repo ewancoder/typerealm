@@ -10,10 +10,12 @@ namespace TypeRealm.Server
     public sealed class StatusFactory : IStatusFactory
     {
         private readonly IPlayerRepository _playerRepository;
+        private readonly ILocationStore _locationStore;
 
-        public StatusFactory(IPlayerRepository playerRepository)
+        public StatusFactory(IPlayerRepository playerRepository, ILocationStore locationStore)
         {
             _playerRepository = playerRepository;
+            _locationStore = locationStore;
         }
 
         public Status MakeStatus(PlayerId playerId, IEnumerable<PlayerId> activePlayers)
@@ -30,6 +32,10 @@ namespace TypeRealm.Server
             if (players.Any(p => p == null))
                 throw new InvalidOperationException($"Not all active players exist in repository.");
 
+            var location = _locationStore.GetLocation(player.LocationId);
+            if (location == null)
+                throw new InvalidOperationException($"Location {player.LocationId} is not found.");
+
             var neighbors = players
                 .Where(p => p.IsAtSamePlaceAs(player) && p.PlayerId != player.PlayerId)
                 .Select(c => c.Name.Value)
@@ -39,7 +45,8 @@ namespace TypeRealm.Server
             {
                 Name = player.Name,
                 LocationId = player.LocationId.Value,
-                Neighbors = neighbors
+                Neighbors = neighbors,
+                Roads = location.Roads.Select(r => r.Value).ToList()
             };
 
             if (player.MovementInformation != null)
