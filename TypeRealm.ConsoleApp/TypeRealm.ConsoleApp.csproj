@@ -41,6 +41,7 @@
     <Compile Include="Data\IDataStore.cs" />
     <Compile Include="Data\InMemoryDataStore.cs" />
     <Compile Include="Data\InMemoryTextStore.cs" />
+    <Compile Include="Data\ITextStore.cs" />
     <Compile Include="Data\Location.cs" />
     <Compile Include="Data\Road.cs" />
     <Compile Include="Game.cs" />

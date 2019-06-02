@@ -81,7 +81,7 @@ namespace TypeRealm.ConsoleApp.Output
                 .Select(roadId => new
                 {
                     RoadId = roadId,
-                    Data = _dataStore.GetRoadFrom(roadId, status.LocationId)
+                    Data = _dataStore.GetRoad(roadId, status.LocationId)
                 })
                 .Select(road => new
                 {
@@ -144,7 +144,7 @@ namespace TypeRealm.ConsoleApp.Output
         {
             PrintHeader(status.Name);
 
-            var road = _dataStore.GetRoadFrom(status.MovementStatus.RoadId, status.LocationId);
+            var road = _dataStore.GetRoad(status.MovementStatus.RoadId, status.MovementStatus.Direction);
 
             _output.WriteLine(Layout.FullBar);
             _output.WriteLine();
