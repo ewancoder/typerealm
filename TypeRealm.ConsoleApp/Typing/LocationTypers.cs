@@ -23,6 +23,11 @@ namespace TypeRealm.ConsoleApp.Typing
             }
         }
 
+        public Typer GetTyperFor(int roadId)
+        {
+            return _roadTypers[roadId];
+        }
+
         protected override void OnTyped(Typer typer)
         {
             var roadId = _roadTypers.Single(t => t.Value == typer).Key;

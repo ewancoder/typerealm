@@ -57,6 +57,7 @@
     <Compile Include="Output\ConsoleOutput.cs" />
     <Compile Include="Networking\Reconnect.cs" />
     <Compile Include="Networking\TaskExtentions.cs" />
+    <Compile Include="Output\OutputExtensions.cs" />
     <Compile Include="Output\Printer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

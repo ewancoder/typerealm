@@ -67,7 +67,7 @@ namespace TypeRealm.ConsoleApp
         /// <param name="status">New status.</param>
         public void UpdateState(Status status)
         {
-            //var previousStatus = Status; // Can be useful for change detection.
+            var previousStatus = _status;
             _status = status;
 
             if (status.MovementStatus != null)
@@ -81,15 +81,28 @@ namespace TypeRealm.ConsoleApp
                     var roadTyper = new RoadTyper(_messages, text, progress);
 
                     SetRoad(roadTyper);
+                    Print();
                     return;
                 }
 
-                // TODO: No way to tell if some status has changed at server side.
-                // If we turned around and the way back has the same distance,
-                // everything will stay the same except for progress. BUT:
-                // We can't refresh progress here because if some other player walks on the road
-                // and we already typed 9/10 characters, the progress will be reset
-                // by server side.
+                // If state already way OnTheRoad, then previous MovementStatus shouldn't be null.
+                if (previousStatus.MovementStatus.Direction != status.MovementStatus.Direction
+                    || previousStatus.MovementStatus.RoadId != status.MovementStatus.RoadId
+                    || previousStatus.MovementStatus.Progress.Distance != status.MovementStatus.Progress.Distance
+                    || previousStatus.MovementStatus.Progress.Progress != status.MovementStatus.Progress.Progress)
+                {
+                    // Something has changed. Update everything.
+                    var distance = status.MovementStatus.Progress.Distance;
+                    var progress = status.MovementStatus.Progress.Progress;
+
+                    var text = _texts.GetText(distance);
+                    var wrapped = Layout.WrapFull(text);
+                    var roadTyper = new RoadTyper(_messages, wrapped, progress);
+
+                    SetRoad(roadTyper);
+                    Print();
+                    return;
+                }
             }
 
             if (_state != GameState.AtLocation)
@@ -137,7 +150,11 @@ namespace TypeRealm.ConsoleApp
 
         private void Print()
         {
-            _printer.Print(_state, _status);
+            _printer.Print(
+                _state, _status,
+                _inputHandler as LocationTyper,
+                _inputHandler as RoadTyper,
+                _notifications);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace TypeRealm.ConsoleApp.Networking
             // When client did not hear from server - reconnect.
             _heartbeat.Elapsed += (object sender, ElapsedEventArgs e) =>
             {
-                Reconnect();
+                //Reconnect();
             };
 
             // HACK. Need to call Connect method separately after setting up dependencies.
@@ -201,43 +201,48 @@ namespace TypeRealm.ConsoleApp.Networking
 
         private void StartListening()
         {
-            try
+            while (IsConnected && !_isReconnecting)
             {
-                while (IsConnected && !_isReconnecting)
+                object message;
+
+                try
                 {
-                    var message = _connection.Read();
-
-                    if (message is Heartbeat)
-                    {
-                        _heartbeat.Stop();
-                        _heartbeat.Start();
-                        continue;
-                    }
-
+                    message = _connection.Read();
+                }
+                catch
+                {
+                    // When we try to reconnect - we come here because we dispose of
+                    // connection and read operation fails. We don't want to throw.
+                    // We want to end this method to allow reconnection process to
+                    // succeed (it waits for listening process to finish).
                     lock (_lock)
                     {
-                        _dispatcher.Dispatch(message);
+                        if (_isReconnecting)
+                            return;
                     }
 
-                    if (message is Disconnected)
-                        IsConnected = false;
-                }
-            }
-            catch
-            {
-                // When we try to reconnect - we come here because we dispose of
-                // connection and read operation fails. We don't want to throw.
-                // We want to end this method to allow reconnection process to
-                // succeed (it waits for listening process to finish).
-                lock (_lock)
-                {
-                    if (_isReconnecting)
-                        return;
+                    // Free this method because Reconnect() will wait for it to finish.
+                    // If reconnection will fail - connection will be disposed.
+                    Task.Run(Reconnect);
+                    return;
                 }
 
-                // Free this method because Reconnect() will wait for it to finish.
-                // If reconnection will fail - connection will be disposed.
-                Task.Run(Reconnect);
+                if (message is Heartbeat)
+                {
+                    _heartbeat.Stop();
+                    _heartbeat.Start();
+                    continue;
+                }
+
+                lock (_lock)
+                {
+                    // Don't put this inside try-catch.
+                    // If client code fails, we need to throw, not to reconnect.
+                    _dispatcher.Dispatch(message);
+                }
+
+                if (message is Disconnected)
+                    IsConnected = false;
             }
         }
     }

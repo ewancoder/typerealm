@@ -1,18 +1,20 @@
-﻿namespace TypeRealm.ConsoleApp.Data
+﻿using System.Collections.Generic;
+using TypeRealm.Messages.Movement;
+
+namespace TypeRealm.ConsoleApp.Data
 {
     public interface IDataStore
     {
         Location GetLocation(int locationId);
-        Road GetRoad(int roadId);
+        Road GetRoadFrom(int roadId, int locationId);
     }
 
     public interface ITextStore
     {
-        // TODO: Change to IEnumerable<string> GetRandomText() and make methods on top of it.
         /// <summary>
-        /// Gets random word or phrase that you need to type to select / click something.
+        /// Gets random words or phrases that you need to type to select / click something.
         /// </summary>
-        string GetActionPhrase();
+        IEnumerable<string> GetPhrases();
 
         /// <summary>
         /// Gets text paragraph that you need to type in order to get somewhere.

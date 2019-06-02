@@ -1,4 +1,6 @@
-﻿namespace TypeRealm.ConsoleApp.Typing
+﻿using System.Collections.Generic;
+
+namespace TypeRealm.ConsoleApp.Typing
 {
     internal interface IInputHandler
     {

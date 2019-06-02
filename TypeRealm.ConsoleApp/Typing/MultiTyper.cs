@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TypeRealm.ConsoleApp.Data;
 
@@ -83,12 +84,18 @@ namespace TypeRealm.ConsoleApp.Typing
 
         private string GetUniqueWord()
         {
-            var word = _texts.GetActionPhrase();
+            // TODO: Get enumerator and use it to get words one by one.
+            // But then it will need to be disposable.
+            // Maybe make a shared service for this.
+            foreach (var word in _texts.GetPhrases())
+            {
+                if (_typers.ContainsKey(word[0]))
+                    continue;
 
-            while (_typers.ContainsKey(word[0]))
-                word = _texts.GetActionPhrase();
+                return word;
+            }
 
-            return word;
+            throw new InvalidOperationException("Unique word for MultiTyper is not found.");
         }
     }
 }

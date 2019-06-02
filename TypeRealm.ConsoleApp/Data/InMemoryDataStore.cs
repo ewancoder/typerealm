@@ -1,4 +1,6 @@
-﻿namespace TypeRealm.ConsoleApp.Data
+﻿using TypeRealm.Messages.Movement;
+
+namespace TypeRealm.ConsoleApp.Data
 {
     /*
      * Village (1) --(road 1)--> Forest (2)
@@ -25,22 +27,22 @@
             }
         }
 
-        public Road GetRoad(int roadId)
+        public Road GetRoadFrom(int roadId, int locationId)
         {
             switch (roadId)
             {
                 case 1:
-                    return new Road(
-                        new RoadSide("East gate", "Small road goes downhill to shallow grove."),
-                        new RoadSide("East hill", "The village surmounts a huge mound going up to the west from the forest."));
+                    return locationId == 1
+                        ? new Road("East gate", "Small road goes downhill to shallow grove.")
+                        : new Road("East hill", "The village surmounts a huge mound going up to the west from the forest.");
                 case 2:
-                    return new Road(
-                        new RoadSide("Trail to the south", "The trail leads to the castle visible from here."),
-                        new RoadSide("Trail to the forest", "Shallow forest is visible from here."));
+                    return locationId == 2
+                        ? new Road("Trail to the south", "The trail leads to the castle visible from here.")
+                        : new Road("Trail to the forest", "Shallow forest is visible from here.");
                 case 3:
-                    return new Road(
-                        new RoadSide("North gate", "The village lies just outside the castle."),
-                        new RoadSide("South gate", "The castle is built just near the village."));
+                    return locationId == 3
+                        ? new Road("North gate", "The village lies just outside the castle.")
+                        : new Road("South gate", "The castle is built just near the village.");
                 default:
                     return null;
             }

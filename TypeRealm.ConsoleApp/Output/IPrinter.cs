@@ -1,14 +1,11 @@
-﻿using TypeRealm.Messages;
+﻿using System.Collections.Generic;
+using TypeRealm.ConsoleApp.Typing;
+using TypeRealm.Messages;
 
 namespace TypeRealm.ConsoleApp.Output
 {
-    public interface IPrinter
+    internal interface IPrinter
     {
-        /*void Print(Status status, IEnumerable<string> notifications);
-        void DisconnectedWithReason(string reason);
-        void Reconnecting();*/
-        //void PrintLoadingScreen();
-        //void PrintDisconnectedScreen();
-        void Print(GameState state, Status status);
+        void Print(GameState state, Status status, LocationTyper locationTyper, RoadTyper roadTyper, IEnumerable<string> notifications);
     }
 }

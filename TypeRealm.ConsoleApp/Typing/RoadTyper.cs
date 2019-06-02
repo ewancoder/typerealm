@@ -1,4 +1,5 @@
-﻿using TypeRealm.ConsoleApp.Messaging;
+﻿using System.Collections.Generic;
+using TypeRealm.ConsoleApp.Messaging;
 using TypeRealm.Messages.Movement;
 
 namespace TypeRealm.ConsoleApp.Typing
@@ -14,6 +15,8 @@ namespace TypeRealm.ConsoleApp.Typing
             _messages = messageSender;
             _typer = new Typer(text, progress);
         }
+
+        public Typer Typer => _typer;
 
         public void Backspace()
         {
