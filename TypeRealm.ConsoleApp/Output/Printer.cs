@@ -161,6 +161,16 @@ namespace TypeRealm.ConsoleApp.Output
             _output.WriteLine(Layout.FullBar);
             _output.WriteLine();
 
+            PrintLeft("Neighbors:");
+            foreach (var neighbor in status.Neighbors)
+            {
+                PrintLeft(neighbor);
+            }
+
+            _output.WriteLine();
+            _output.WriteLine(Layout.FullBar);
+            _output.WriteLine();
+
             PrintLeft("Notifications:");
             PrintNotifications(notifications);
         }
