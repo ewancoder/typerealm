@@ -11,7 +11,7 @@ namespace TypeRealm.Messages.Tests
         public void ShouldLoadAllTypes()
         {
             var types = TypeLoader.Messages.ToList();
-            Assert.Equal(11, types.Count);
+            Assert.Equal(12, types.Count);
 
             foreach (var type in new[]
             {
@@ -24,6 +24,7 @@ namespace TypeRealm.Messages.Tests
                 typeof(Move),
                 typeof(MovementStatus),
                 typeof(MovementProgress),
+                typeof(RoadStatus),
                 typeof(TurnAround),
 
                 typeof(Say),

@@ -47,26 +47,5 @@ namespace TypeRealm.ConsoleApp.Data
                     return null;
             }
         }
-
-        public Road GetRoad(int roadId, int locationId)
-        {
-            switch (roadId)
-            {
-                case 1:
-                    return locationId == 1
-                        ? new Road("East gate", "From village to forest. Small road goes downhill to shallow grove.")
-                        : new Road("East hill", "From forest to village. The village surmounts a huge mound going up to the west from the forest.");
-                case 2:
-                    return locationId == 2
-                        ? new Road("Trail to the south", "From forest to castle. The trail leads to the castle visible from here.")
-                        : new Road("Trail to the forest", "From castle to forest. Shallow forest is visible from here.");
-                case 3:
-                    return locationId == 3
-                        ? new Road("North gate", "From castle to village. The village lies just outside the castle.")
-                        : new Road("South gate", "From village to castle. The castle is built just near the village.");
-                default:
-                    return null;
-            }
-        }
     }
 }

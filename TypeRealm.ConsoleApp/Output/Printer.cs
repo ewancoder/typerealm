@@ -78,10 +78,10 @@ namespace TypeRealm.ConsoleApp.Output
             _output.WriteLine(Layout.RightBar);
 
             var roads = status.Roads
-                .Select(roadId => new
+                .Select(road => new
                 {
-                    RoadId = roadId,
-                    Data = _dataStore.GetRoad(roadId, status.LocationId)
+                    RoadId = road.RoadId,
+                    Data = _dataStore.GetRoad(road.RoadId, road.Direction)
                 })
                 .Select(road => new
                 {

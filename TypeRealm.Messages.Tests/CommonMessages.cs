@@ -40,7 +40,19 @@ namespace TypeRealm.Messages.Tests
                     "neighbor 1",
                     "neighbor 2"
                 },
-                Roads = new List<int> { 1, 2 }
+                Roads = new List<RoadStatus>
+                {
+                    new RoadStatus
+                    {
+                        RoadId = 15,
+                        Direction = MovementDirection.Forward
+                    },
+                    new RoadStatus
+                    {
+                        RoadId = 25,
+                        Direction = MovementDirection.Backward
+                    }
+                }
             }, message =>
             {
                 Assert.Equal(10, message.LocationId);
@@ -53,8 +65,10 @@ namespace TypeRealm.Messages.Tests
                 Assert.Equal("neighbor 1", message.Neighbors[0]);
                 Assert.Equal("neighbor 2", message.Neighbors[1]);
                 Assert.Equal(2, message.Roads.Count);
-                Assert.Equal(1, message.Roads[0]);
-                Assert.Equal(2, message.Roads[1]);
+                Assert.Equal(15, message.Roads[0].RoadId);
+                Assert.Equal(MovementDirection.Forward, message.Roads[0].Direction);
+                Assert.Equal(25, message.Roads[1].RoadId);
+                Assert.Equal(MovementDirection.Backward, message.Roads[1].Direction);
             });
         }
 

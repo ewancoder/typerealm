@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeRealm.ConsoleApp.Data;
 using TypeRealm.ConsoleApp.Messaging;
 using TypeRealm.ConsoleApp.Output;
@@ -107,7 +108,7 @@ namespace TypeRealm.ConsoleApp
 
             if (_state != GameState.AtLocation)
             {
-                var locationTyper = new LocationTyper(_messages, _texts, status.Roads);
+                var locationTyper = new LocationTyper(_messages, _texts, status.Roads.Select(r => r.RoadId));
                 SetLocation(locationTyper);
             }
 

@@ -6,6 +6,5 @@ namespace TypeRealm.ConsoleApp.Data
     {
         Location GetLocation(int locationId);
         Road GetRoad(int roadId, MovementDirection direction);
-        Road GetRoad(int roadId, int locationId);
     }
 }

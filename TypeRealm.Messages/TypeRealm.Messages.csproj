@@ -46,6 +46,7 @@
     <Compile Include="Movement\EnterRoad.cs" />
     <Compile Include="IndexedCollection[TValue].cs" />
     <Compile Include="MessageSerializer.cs" />
+    <Compile Include="Movement\RoadStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Connection\Quit.cs" />
     <Compile Include="Say.cs" />

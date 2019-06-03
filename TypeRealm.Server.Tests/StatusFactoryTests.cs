@@ -11,13 +11,15 @@ namespace TypeRealm.Server.Tests
     {
         private readonly Mock<IPlayerRepository> _playerRepositoryMock;
         private readonly Mock<ILocationStore> _locationStoreMock;
+        private readonly Mock<IRoadStore> _roadStoreMock;
         private readonly StatusFactory _sut;
 
         public StatusFactoryTests()
         {
             _playerRepositoryMock = new Mock<IPlayerRepository>();
             _locationStoreMock = new Mock<ILocationStore>();
-            _sut = new StatusFactory(_playerRepositoryMock.Object, _locationStoreMock.Object);
+            _roadStoreMock = new Mock<IRoadStore>();
+            _sut = new StatusFactory(_playerRepositoryMock.Object, _locationStoreMock.Object, _roadStoreMock.Object);
         }
 
         [Fact]
@@ -167,11 +169,25 @@ namespace TypeRealm.Server.Tests
                 .Setup(x => x.GetLocation(locationId))
                 .Returns(new Location(new[] { road1, road2 }));
 
+            _roadStoreMock
+                .Setup(x => x.Find(road1))
+                .Returns(new Road(road1,
+                    new RoadPoint(locationId, 10),
+                    new RoadPoint(new LocationId(20), 10)));
+
+            _roadStoreMock
+                .Setup(x => x.Find(road2))
+                .Returns(new Road(road2,
+                    new RoadPoint(new LocationId(20), 10),
+                    new RoadPoint(locationId, 10)));
+
             var status = _sut.MakeStatus(playerId, new[] { playerId });
 
             Assert.Equal(2, status.Roads.Count);
-            Assert.Equal(10, status.Roads[0]);
-            Assert.Equal(20, status.Roads[1]);
+            Assert.Equal(10, status.Roads[0].RoadId);
+            Assert.Equal(MovementDirection.Forward, status.Roads[0].Direction);
+            Assert.Equal(20, status.Roads[1].RoadId);
+            Assert.Equal(MovementDirection.Backward, status.Roads[1].Direction);
         }
 
         private void AddToRepositoryAndSetupLocationStore(PlayerId playerId, PlayerName playerName, LocationId locationId)

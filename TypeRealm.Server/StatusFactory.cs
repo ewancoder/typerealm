@@ -11,11 +11,13 @@ namespace TypeRealm.Server
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly ILocationStore _locationStore;
+        private readonly IRoadStore _roadStore;
 
-        public StatusFactory(IPlayerRepository playerRepository, ILocationStore locationStore)
+        public StatusFactory(IPlayerRepository playerRepository, ILocationStore locationStore, IRoadStore roadStore)
         {
             _playerRepository = playerRepository;
             _locationStore = locationStore;
+            _roadStore = roadStore;
         }
 
         public Status MakeStatus(PlayerId playerId, IEnumerable<PlayerId> activePlayers)
@@ -46,7 +48,18 @@ namespace TypeRealm.Server
                 Name = player.Name,
                 LocationId = player.LocationId.Value,
                 Neighbors = neighbors,
-                Roads = location.Roads.Select(r => r.Value).ToList()
+                Roads = location.Roads
+                    .Select(r => r.Value)
+                    .Select(roadId => _roadStore.Find(new RoadId(roadId)))
+                    .Select(road => new RoadStatus
+                    {
+                        RoadId = road.RoadId.Value,
+
+                        // TODO: Move to RoadExtensions class.
+                        Direction = road.FromPoint.LocationId == player.LocationId
+                            ? MovementDirection.Forward : MovementDirection.Backward
+                    })
+                    .ToList()
             };
 
             if (player.MovementInformation != null)

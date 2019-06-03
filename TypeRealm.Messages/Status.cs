@@ -15,7 +15,7 @@ namespace TypeRealm.Messages
         public int LocationId { get; set; }
 
         [ProtoMember(3)]
-        public List<int> Roads { get; set; } = new List<int>();
+        public List<RoadStatus> Roads { get; set; } = new List<RoadStatus>();
 
         [ProtoMember(4)]
         public MovementStatus MovementStatus { get; set; }
