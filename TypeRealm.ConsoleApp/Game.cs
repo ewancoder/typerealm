@@ -78,7 +78,8 @@ namespace TypeRealm.ConsoleApp
                     var progress = status.MovementStatus.Progress.Progress;
 
                     var text = _texts.GetText(distance);
-                    var roadTyper = new RoadTyper(_messages, text, progress);
+                    var wrapped = Layout.WrapFull(text);
+                    var roadTyper = new RoadTyper(_messages, wrapped, progress);
 
                     SetRoad(roadTyper);
                     Print();
@@ -90,14 +91,17 @@ namespace TypeRealm.ConsoleApp
                     var distance = status.MovementStatus.Progress.Distance;
                     var progress = status.MovementStatus.Progress.Progress;
 
-                    var text = _texts.GetText(distance);
-                    var wrapped = Layout.WrapFull(text);
-                    var roadTyper = new RoadTyper(_messages, wrapped, progress);
-
-                    SetRoad(roadTyper);
-                    Print();
+                    if (previousStatus.MovementStatus.Direction != status.MovementStatus.Direction)
+                    {
+                        // Load new text only if you turned around.
+                        var text = _texts.GetText(distance);
+                        var wrapped = Layout.WrapFull(text);
+                        var roadTyper = new RoadTyper(_messages, wrapped, progress);
+                        SetRoad(roadTyper);
+                    }
                 }
 
+                Print();
                 return;
             }
 
