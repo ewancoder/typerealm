@@ -2,7 +2,7 @@
 
 namespace TypeRealm.Server.Infrastructure
 {
-    internal sealed class InMemoryLocationStore : ILocationStore
+    /*internal sealed class InMemoryLocationStore : ILocationStore
     {
         private readonly LocationId _startingLocationId;
 
@@ -34,5 +34,5 @@ namespace TypeRealm.Server.Infrastructure
         {
             return _startingLocationId;
         }
-    }
+    }*/
 }

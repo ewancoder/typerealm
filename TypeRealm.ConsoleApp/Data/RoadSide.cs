@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace TypeRealm.ConsoleApp.Data
+﻿namespace TypeRealm.ConsoleApp.Data
 {
-    public sealed class Location
+    public sealed class RoadSide
     {
-        public Location(string name, string description)
+        public RoadSide(string name, string description)
         {
             Name = name;
             Description = description;

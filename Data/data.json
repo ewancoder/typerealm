@@ -1,0 +1,66 @@
+{
+  "locations": [
+    {
+      "locationId": 1,
+      "name": "first location",
+      "description": "first location description"
+    },
+    {
+      "locationId": 2,
+      "name": "second location",
+      "description": "second location description"
+    },
+    {
+      "locationId": 3,
+      "name": "third location",
+      "description": "third location description"
+    }
+  ],
+  "roads": [
+    {
+      "roadId": 1,
+      "forward": {
+        "locationId": 1,
+        "name": "first road forward name",
+        "description": "first road forward description: from first to second location, distance is 10",
+        "distance": 10
+      },
+      "backward": {
+        "locationId": 2,
+        "name": "first road backward name",
+        "description": "first road backward description: from second to first location, distance is 50",
+        "distance": 50
+      }
+    },
+    {
+      "roadId": 2,
+      "forward": {
+        "locationId": 2,
+        "name": "second road forward name",
+        "description": "second road forward description: from second to third location, distance is 10",
+        "distance": 10
+      },
+      "backward": {
+        "locationId": 3,
+        "name": "second road backward name",
+        "description": "second road backward description: from third to second location, distance is 5",
+        "distance": 5
+      }
+    },
+    {
+      "roadId": 3,
+      "forward": {
+        "locationId": 3,
+        "name": "third road forward name",
+        "description": "third road forward description: from third to first location, distance is 15",
+        "distance": 15
+      },
+      "backward": {
+        "locationId": 1,
+        "name": "third road backward name",
+        "description": "third road backward description: from first to third location, distance is 15",
+        "distance": 15
+      }
+    }
+  ]
+}

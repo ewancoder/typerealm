@@ -2,7 +2,7 @@
 
 namespace TypeRealm.Server.Infrastructure
 {
-    internal sealed class InMemoryRoadStore : IRoadStore
+    /*internal sealed class InMemoryRoadStore : IRoadStore
     {
         public Road Find(RoadId roadId)
         {
@@ -26,5 +26,5 @@ namespace TypeRealm.Server.Infrastructure
                     return null;
             }
         }
-    }
+    }*/
 }

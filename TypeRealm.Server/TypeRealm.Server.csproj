@@ -69,6 +69,10 @@
     <Compile Include="Networking\TcpClientListenerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TypeRealm.Data\TypeRealm.Data.csproj">
+      <Project>{7C7A5AC8-9211-43B9-B7E6-AFD450EA8663}</Project>
+      <Name>TypeRealm.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TypeRealm.Domain\TypeRealm.Domain.csproj">
       <Project>{1EDF82DD-EDF0-428A-8B89-E074E65056AD}</Project>
       <Name>TypeRealm.Domain</Name>

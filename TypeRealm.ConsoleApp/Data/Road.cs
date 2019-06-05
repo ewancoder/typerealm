@@ -2,13 +2,13 @@
 {
     public sealed class Road
     {
-        public Road(string name, string description)
+        public Road(RoadSide forwardSide, RoadSide backwardSide)
         {
-            Name = name;
-            Description = description;
+            ForwardSide = forwardSide;
+            BackwardSide = backwardSide;
         }
 
-        public string Name { get; }
-        public string Description { get; }
+        public RoadSide ForwardSide { get; }
+        public RoadSide BackwardSide { get; }
     }
 }

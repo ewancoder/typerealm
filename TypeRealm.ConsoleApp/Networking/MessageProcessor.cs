@@ -36,7 +36,7 @@ namespace TypeRealm.ConsoleApp.Networking
             // When client did not hear from server - reconnect.
             _heartbeat.Elapsed += (object sender, ElapsedEventArgs e) =>
             {
-                //Reconnect();
+                Reconnect();
             };
 
             // HACK. Need to call Connect method separately after setting up dependencies.

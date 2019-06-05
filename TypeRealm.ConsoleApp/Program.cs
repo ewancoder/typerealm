@@ -3,7 +3,6 @@ using TypeRealm.ConsoleApp.Data;
 using TypeRealm.ConsoleApp.Messaging;
 using TypeRealm.ConsoleApp.Networking;
 using TypeRealm.ConsoleApp.Output;
-using TypeRealm.ConsoleApp.Typing;
 using TypeRealm.Messages.Connection;
 
 namespace TypeRealm.ConsoleApp
@@ -36,11 +35,12 @@ namespace TypeRealm.ConsoleApp
             };
 
             var connectionFactory = new TcpConnectionFactory(server, Port);
-            var dataStore = new InMemoryDataStore();
+
+            var dataStore = new DataStoreFactory().LoadFromFile("../../../Data/data.json");
+            var textStore = new TextStoreFactory().LoadFromFile("../../../Data/texts.txt");
 
             var output = new ConsoleOutput();
             var printer = new Printer(output, dataStore);
-            var textStore = new InMemoryTextStore();
 
             var dispatcher = new GameMessageDispatcher();
 

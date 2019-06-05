@@ -1,0 +1,6 @@
+You might be one of those people that perform very well when it comes to sports. If you are and you are in high school, you might have the idea that your ability at a given sport could end up putting you in line for a sports scholarship that will either entirely pay for college, or at least partially pay for your higher education. However, there is more to getting a scholarship than just being good at sports. One thing you have to understand is that with sports scholarships there are a few ways to get them.
+
+Before we begin, I would like to briefly explain why open source is important. When we think of the software we use to write, most people think of programs written by big corporations like Microsoft Word Scrivener. These programs cost
+money and are built by large teams of programmers. At anytime these companies and these products could go away and not be available anymore. Open source programs are a little different. The vast majority are free. The
+code used to create them is freely available, meaning that if the original developer stops work on his project, someone else can take it up. It also means that if you have some coding knowledge, you too can contribute to the project.
+Open source developers typically respond much quicker to their users than huge multinational organizations.

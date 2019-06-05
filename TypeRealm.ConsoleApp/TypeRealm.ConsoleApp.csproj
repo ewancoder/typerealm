@@ -38,12 +38,17 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DataStoreExtensions.cs" />
+    <Compile Include="Data\DataStoreFactory.cs" />
     <Compile Include="Data\IDataStore.cs" />
-    <Compile Include="Data\InMemoryDataStore.cs" />
+    <Compile Include="Data\DataStore.cs" />
     <Compile Include="Data\InMemoryTextStore.cs" />
     <Compile Include="Data\ITextStore.cs" />
     <Compile Include="Data\Location.cs" />
+    <Compile Include="Data\Randomizer.cs" />
     <Compile Include="Data\Road.cs" />
+    <Compile Include="Data\RoadSide.cs" />
+    <Compile Include="Data\TextStoreFactory.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Messages\Reconnecting.cs" />
     <Compile Include="Messaging\IMessageSender.cs" />
@@ -72,6 +77,10 @@
     <Compile Include="Typing\Typer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TypeRealm.Data\TypeRealm.Data.csproj">
+      <Project>{7C7A5AC8-9211-43B9-B7E6-AFD450EA8663}</Project>
+      <Name>TypeRealm.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TypeRealm.Domain\TypeRealm.Domain.csproj">
       <Project>{1EDF82DD-EDF0-428A-8B89-E074E65056AD}</Project>
       <Name>TypeRealm.Domain</Name>

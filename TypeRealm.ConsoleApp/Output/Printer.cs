@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TypeRealm.ConsoleApp.Data;
 using TypeRealm.ConsoleApp.Typing;
+using TypeRealm.Data;
 using TypeRealm.Messages;
 
 namespace TypeRealm.ConsoleApp.Output
@@ -81,7 +82,7 @@ namespace TypeRealm.ConsoleApp.Output
                 .Select(road => new
                 {
                     RoadId = road.RoadId,
-                    Data = _dataStore.GetRoad(road.RoadId, road.Direction)
+                    Data = _dataStore.GetRoadSide(road.RoadId, road.Direction)
                 })
                 .Select(road => new
                 {
@@ -144,7 +145,7 @@ namespace TypeRealm.ConsoleApp.Output
         {
             PrintHeader(status.Name);
 
-            var road = _dataStore.GetRoad(status.MovementStatus.RoadId, status.MovementStatus.Direction);
+            var road = _dataStore.GetRoadSide(status.MovementStatus.RoadId, status.MovementStatus.Direction);
 
             _output.WriteLine(Layout.FullBar);
             _output.WriteLine();
